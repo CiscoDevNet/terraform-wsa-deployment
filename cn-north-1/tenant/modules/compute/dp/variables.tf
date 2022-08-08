@@ -5,7 +5,7 @@ variable "subnets" {
 
 variable "iam_profile" {
   type = string
-} 
+}
 
 variable "sg_autoscaling" {
   type = set(string)
@@ -36,19 +36,11 @@ variable "instance_type" {
   type = string
 }
 
-variable "key_name" {
-  type = string
-}
+##variable "key_name" {
+##  type = string
+##}
 
 variable "desired" {
-  type = number
-}
-
-variable "max" {
-  type = number
-}
-
-variable "min" {
   type = number
 }
 

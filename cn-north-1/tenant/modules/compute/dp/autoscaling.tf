@@ -1,4 +1,3 @@
-
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO: the following data block pics up those Subnets from the list that are specific to our VPC and have the SWA-Tenant tag
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--####--##--##--##--##--
@@ -83,10 +82,10 @@ resource "aws_lb_listener" "k3s_lb_http" {
 
 
 resource "aws_launch_template" "wsa_autoscale" {
-  name = var.lt_name                    // "swa-cp-autoscale-test"
+  name = "${var.lt_name}-lt"                   // "swa-cp-autoscale-test"
   image_id = var.image_id               //"ami-0ecb92ab16b149e5f"
   instance_type = var.instance_type     //"c5.2xlarge"
-  key_name = var.key_name               //"wsa-test-key"
+  ##key_name = var.key_name               //"wsa-test-key"
   update_default_version = "true"
   vpc_security_group_ids = var.sg_autoscaling
   metadata_options {
@@ -95,9 +94,8 @@ resource "aws_launch_template" "wsa_autoscale" {
   }
   iam_instance_profile {
     name = var.iam_profile
-  } 
+  }
 }
-
 
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
@@ -106,11 +104,11 @@ resource "aws_launch_template" "wsa_autoscale" {
 
 
 resource "aws_autoscaling_group" "autoscaled_group" {
-  name = "${aws_launch_template.wsa_autoscale.name}-asg"
+  name = "${var.swa_tenant}-dp-ASG"
   //availability_zones = ["cn-north-1a", "cn-north-1b","cn-north-1d"]
   desired_capacity   = var.desired
-  max_size           = var.max
-  min_size           = var.min
+  max_size           = var.desired + 1
+  min_size           = var.desired == 1 ? var.desired : var.desired - 1
   health_check_type = "ELB"
   target_group_arns = [ aws_lb_target_group.swa_tg.arn ]   ############  NEW Addition to the DP autoscale only
   launch_template {
@@ -126,12 +124,12 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   ]
   metrics_granularity = "1Minute"
   vpc_zone_identifier = var.subnets
-  initial_lifecycle_hook {
+  /*initial_lifecycle_hook {
     name                 = "attachcpSecondaryNic"
     default_result       = "CONTINUE"
     heartbeat_timeout    = 60
     lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
-  }
+  }*/
   lifecycle {
     create_before_destroy = true
   }
@@ -166,4 +164,5 @@ resource "aws_autoscaling_group" "autoscaled_group" {
         propagate_at_launch = true
   }
 }
+
 

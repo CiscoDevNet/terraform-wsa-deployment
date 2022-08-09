@@ -37,12 +37,18 @@ data "aws_internet_gateway" "wsa_igw" {
   }
 }
 
+
+data "aws_region" "current_region" {
+}
+
+
 resource "aws_route_table" "swa_route" {
   vpc_id = var.vpc_id
   route {
         cidr_block = "0.0.0.0/0"
         gateway_id = "${element(split("/", data.aws_internet_gateway.wsa_igw.arn),1)}"
   }
+  tags = { "Name" = "${var.swa_tenant}-${data.aws_region.current_region.name}-RT" }
 }
 
 ##############################################

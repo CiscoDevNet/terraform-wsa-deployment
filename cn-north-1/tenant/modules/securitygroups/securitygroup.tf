@@ -15,9 +15,7 @@ resource "aws_security_group" "mgmt_sec_group" {
     protocol = "-1"
     cidr_blocks = [var.vpc_cidr]
   }
-  tags = { 
-	   Name = "Demo-Security-Group" 
-	 }
+  tags = { "Name" = "${var.swa_tenant}-${data.aws_region.current.name}-SG" }
 }
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##

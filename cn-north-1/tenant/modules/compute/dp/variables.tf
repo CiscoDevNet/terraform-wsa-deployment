@@ -44,3 +44,32 @@ variable "desired" {
   type = number
 }
 
+variable "healthtcheck_port" {
+  type    = string
+  default = "8443"
+}
+
+variable "healthtcheck_protocol" {
+  type    = string
+  default = "HTTPS"
+}
+
+variable "listener_port" {
+  type    = string
+  default = "3128"
+}
+
+variable "listener_protocol" {
+  type    = string
+  default = "TCP"
+}
+
+variable "tg_port" {
+  type    = string
+  default = "3128"
+}
+
+variable "tg_protocol" {
+  type    = string
+  default = "TCP"
+}

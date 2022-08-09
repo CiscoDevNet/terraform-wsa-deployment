@@ -5,23 +5,6 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
 
-resource "aws_iam_policy" "ec2_policy" {
-  name = "${var.swa_tenant}-policy"
-  path = "/"
-  description = "Describe instances Policy for Consul AutoJoin Cluster"
-  policy = jsonencode({
-  "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "ec2:DescribeInstances",
-            "Resource": "*"
-        },
-    ]
-  })
-
-}
-
 resource "aws_iam_policy" "eip_policy" {
   name = "${var.swa_tenant}-eip-policy"
   path = "/"
@@ -46,6 +29,7 @@ resource "aws_iam_policy" "eip_policy" {
             "Effect": "Allow",
             "Action": [
                 "ec2:DescribeAddresses",
+                "ec2:DescribeInstances"
             ],
             "Resource": "*"
         },
@@ -77,7 +61,7 @@ resource "aws_iam_role" "ec2_role" {
 }
 
 resource "aws_iam_policy" "s3_policy" {
-  name = "S3_terraform_policy"
+  name = "${var.swa_tenant}-s3-policy"
   path = "/"
   description = "S3 Policy"
   policy = jsonencode({
@@ -102,27 +86,21 @@ resource "aws_iam_policy" "s3_policy" {
 })
 }
 
-resource "aws_iam_policy_attachment" "s3_attachment" {
-  name = "Attaching to S3"
-  roles = [aws_iam_role.ec2_role.name]
-  policy_arn = aws_iam_policy.s3_policy.arn
-}
-
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO: the following resource block attaches the policy to the role
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-resource "aws_iam_policy_attachment" "ec2_instances" {
-  name = "Attaching to instances"
-  roles = [aws_iam_role.ec2_role.name]
-  policy_arn = aws_iam_policy.ec2_policy.arn
-}
-
 
 resource "aws_iam_policy_attachment" "eip_policy_attach" {
-  name = "Attaching to instances"
+  name = "Attaching eip policy to role"
   roles = [aws_iam_role.ec2_role.name]
   policy_arn = aws_iam_policy.eip_policy.arn
+}
+
+resource "aws_iam_policy_attachment" "s3_attachment" {
+  name = "Attaching s3 policy to role"
+  roles = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.s3_policy.arn
 }
 
 

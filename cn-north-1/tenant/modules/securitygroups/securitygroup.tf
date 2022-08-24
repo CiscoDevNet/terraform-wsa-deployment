@@ -16,6 +16,7 @@ resource "aws_security_group" "mgmt_sec_group" {
     cidr_blocks = [var.vpc_cidr]
   }
   tags = { "Name" = "${var.swa_tenant}-${data.aws_region.current.name}-SG" }
+	 
 }
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##

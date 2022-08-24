@@ -78,6 +78,10 @@ module "autoscaling_dp" {
   swa_tenant = var.swa_tenant
   swa_role = "data"
   vpc_id = var.vpc_id
+  healthtcheck_port = var.healthtcheck_port
+  healthtcheck_protocol = var.healthtcheck_protocol
+  listener_port = var.listener_port
+  listener_protocol = var.listener_protocol
 }
 
 

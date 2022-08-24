@@ -9,7 +9,6 @@ resource "aws_subnet" "subnet" {
   count = length(var.subnet_config)
   tags = {
       Name = "${var.swa_tenant}-${var.subnet_config[count.index].availability_zone}-subnet"
-      swa_tenant = var.swa_tenant
   }
   cidr_block = var.subnet_config[count.index].cidr_block
   availability_zone = var.subnet_config[count.index].availability_zone
@@ -81,6 +80,6 @@ data "aws_subnets" "subnet_tenant_public" {
                 values= [var.vpc_id]
         }
    tags = {
-     swa_tenant = var.swa_tenant
+     SWATenant = var.swa_tenant
    }
 }

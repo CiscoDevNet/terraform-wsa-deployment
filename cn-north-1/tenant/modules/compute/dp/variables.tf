@@ -39,3 +39,18 @@ variable "desired" {
   type = number
 }
 
+variable "healthtcheck_port" {
+  type = number
+}
+
+variable "healthtcheck_protocol" {
+  type = string
+}
+
+variable "listener_port" {
+  type = number
+}
+
+variable "listener_protocol" {
+  type = string
+}

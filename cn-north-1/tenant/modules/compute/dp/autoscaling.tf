@@ -49,8 +49,8 @@ resource "aws_lb_target_group" "swa_tg" {
   vpc_id      = var.vpc_id
   target_type = "instance"
   health_check {
-    port     = 8443
-    protocol = "HTTPS"
+     port     = var.healthtcheck_port
+     protocol = var.healthtcheck_protocol
   }
 
   lifecycle {
@@ -66,8 +66,8 @@ resource "aws_lb_target_group" "swa_tg" {
 
 resource "aws_lb_listener" "k3s_lb_http" {
   load_balancer_arn = aws_lb.swa_nlb.id
-  port              = "3128"
-  protocol          = "TCP"
+  port              = var.listener_port
+  protocol          = var.listener_protocol
 
   default_action {
     target_group_arn = aws_lb_target_group.swa_tg.id

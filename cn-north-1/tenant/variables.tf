@@ -56,3 +56,23 @@ variable "upgrade" {
   type = number
   default = 0
 }
+
+variable "healthtcheck_port" {
+  type = number
+  default = 8443 
+}
+
+variable "healthtcheck_protocol" {
+  type = string
+  default = "HTTPS"
+}
+
+variable "listener_port" {
+  type = number
+  default = 3128
+}
+
+variable "listener_protocol" {
+  type = string
+  default = "TCP"
+}

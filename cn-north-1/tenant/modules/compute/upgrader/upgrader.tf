@@ -6,7 +6,7 @@ resource "aws_instance" "upgrader"{
   instance_type = var.instance_type 
   tags = {
     SWARole = "upgrader"
-    version = var.upgrade_version
+    SWAUpgradeVersion = var.upgrade_version
     Name = "${var.swa_tenant}-upgrader"
  } 
 }

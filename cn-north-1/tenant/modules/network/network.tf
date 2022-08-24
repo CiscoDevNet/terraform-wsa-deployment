@@ -9,7 +9,6 @@ resource "aws_subnet" "subnet" {
   count = length(var.subnet_config)
   tags = {
       Name = "${var.swa_tenant}-${var.subnet_config[count.index].availability_zone}-subnet"
-      swa_tenant = var.swa_tenant
   }
   cidr_block = var.subnet_config[count.index].cidr_block
   availability_zone = var.subnet_config[count.index].availability_zone
@@ -37,10 +36,8 @@ data "aws_internet_gateway" "wsa_igw" {
   }
 }
 
-
 data "aws_region" "current_region" {
 }
-
 
 resource "aws_route_table" "swa_route" {
   vpc_id = var.vpc_id
@@ -83,6 +80,6 @@ data "aws_subnets" "subnet_tenant_public" {
                 values= [var.vpc_id]
         }
    tags = {
-     Name = "*${var.swa_tenant}*"
+     SWATenant = var.swa_tenant
    }
 }

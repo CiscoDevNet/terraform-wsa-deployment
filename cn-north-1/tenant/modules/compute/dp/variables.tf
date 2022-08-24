@@ -1,6 +1,5 @@
 variable "subnets" {
   type = set(string)
-
 }
 
 variable "iam_profile" {
@@ -36,40 +35,30 @@ variable "instance_type" {
   type = string
 }
 
-##variable "key_name" {
-##  type = string
-##}
-
 variable "desired" {
   type = number
 }
 
 variable "healthtcheck_port" {
-  type    = string
-  default = "8443"
+  type = number
 }
 
 variable "healthtcheck_protocol" {
-  type    = string
-  default = "HTTPS"
+  type = string
 }
 
 variable "listener_port" {
-  type    = string
-  default = "3128"
+  type = number
 }
 
 variable "listener_protocol" {
-  type    = string
-  default = "TCP"
+  type = string
 }
 
 variable "tg_port" {
-  type    = string
-  default = "3128"
+  type = number
 }
 
 variable "tg_protocol" {
-  type    = string
-  default = "TCP"
+  type = string
 }

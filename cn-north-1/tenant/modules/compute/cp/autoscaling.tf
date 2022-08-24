@@ -16,6 +16,20 @@ resource "aws_launch_template" "wsa_autoscale" {
   iam_instance_profile {
     name = var.iam_profile
   }
+  block_device_mappings {
+    device_name = "/dev/sda1"
+        ebs {
+                delete_on_termination = false
+                encrypted = true
+        }
+     }
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = {
+      Name = "${var.lt_name}-volume"
+    }
+  }
 }
 
 
@@ -24,13 +38,13 @@ resource "aws_launch_template" "wsa_autoscale" {
 #INFO: the following resource creates an AutoScaling Group for the CONTROL PLANE - CP Instances of the cluster
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--
 
+data "aws_default_tags" "provider" {}
 
 resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-cp-ASG"
-  //availability_zones = "cn-north-1a", "cn-north-1b","cn-north-1d"]
   desired_capacity   = var.desired
-  max_size           = var.desired + 1
-  min_size           = var.desired == 1 ? var.desired : var.desired - 1
+  max_size           = var.desired     //(+ 1)
+  min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
   launch_template {
     id = aws_launch_template.wsa_autoscale.id
     version = "$Latest"
@@ -44,28 +58,22 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   ]
   metrics_granularity = "1Minute"
   vpc_zone_identifier = var.subnets
-  /*initial_lifecycle_hook {
-    name                 = "attachcpSecondaryNic"
-    default_result       = "CONTINUE"
-    heartbeat_timeout    = 60
-    lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
-  }*/
   lifecycle {
     create_before_destroy = true
   }
+
+  dynamic "tag" {
+    for_each = data.aws_default_tags.provider.tags
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
+  }
+  
   tag {
         key = "Name"
         value = var.lt_name
-        propagate_at_launch = true
-  }
-  tag {
-        key = "Product"
-        value = "swa"
-        propagate_at_launch = true
-  }
-  tag {
-        key = "SWADeployment"
-        value = "cluster"
         propagate_at_launch = true
   }
   tag {
@@ -74,13 +82,8 @@ resource "aws_autoscaling_group" "autoscaled_group" {
         propagate_at_launch = true
   }
   tag {
-        key = "SWATenant"
-        value = var.swa_tenant
-        propagate_at_launch = true
-  }
-   tag {
         key = "autoScaledExp"
         value = true
         propagate_at_launch = true
-  }
+  }  
 }

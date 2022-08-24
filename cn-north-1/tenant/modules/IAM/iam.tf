@@ -38,6 +38,27 @@ resource "aws_iam_policy" "eip_policy" {
 
 }
 
+resource "aws_iam_policy" "dynamodb_policy" {
+  name = "${var.swa_tenant}-dynamodb-policy"
+  path = "/"
+  description = "dynamodb Policy"
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:*"
+            ],
+            "Resource": [
+                "${var.dynamodb_arn}"
+                ]
+        },
+    ]
+})
+}
+
+
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO: the following resource block creates the IAM Role
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
@@ -86,21 +107,27 @@ resource "aws_iam_policy" "s3_policy" {
 })
 }
 
+
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO: the following resource block attaches the policy to the role
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-
-resource "aws_iam_policy_attachment" "eip_policy_attach" {
-  name = "Attaching eip policy to role"
-  roles = [aws_iam_role.ec2_role.name]
-  policy_arn = aws_iam_policy.eip_policy.arn
-}
-
 resource "aws_iam_policy_attachment" "s3_attachment" {
-  name = "Attaching s3 policy to role"
+  name = "Attaching to S3 policy to Role"
   roles = [aws_iam_role.ec2_role.name]
   policy_arn = aws_iam_policy.s3_policy.arn
+}
+
+resource "aws_iam_policy_attachment" "dynamodb_policy_attach" {
+  name = "Attaching dynamodb policy to role"
+  roles = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.dynamodb_policy.arn
+}
+
+resource "aws_iam_policy_attachment" "eip_policy_attach" {
+  name = "Attaching eip policy to Role"
+  roles = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.eip_policy.arn
 }
 
 

@@ -15,3 +15,10 @@ variable "swa_tenant" {
 variable "bucket_arn" {
   type = string
 }
+
+variable "dynamodb_arn" {
+  type = string
+}
+//variable "dnynamoDB_arn" {
+//  type = string
+//}

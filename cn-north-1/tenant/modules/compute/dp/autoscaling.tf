@@ -24,7 +24,7 @@ resource "aws_lb" "swa_nlb" {
   load_balancer_type = "network"
   //subnets            = [for subnet in data.aws_subnets.subnets_mgmt_public.ids : subnet]
   subnets  = data.aws_subnets.subnets_mgmt_public.ids
-  enable_cross_zone_load_balancing = true
+  enable_cross_zone_load_balancing = false
   enable_deletion_protection = false
 /*
   tags = merge(
@@ -45,12 +45,12 @@ resource "aws_lb" "swa_nlb" {
 resource "aws_lb_target_group" "swa_tg" {
   name        = "${var.swa_tenant}-TG"
   port        = var.tg_port
-  protocol    = var.tg_protocol
+  protocol    = var.var.tg_port
   vpc_id      = var.vpc_id
   target_type = "instance"
   health_check {
-    port     = var.healthtcheck_port
-    protocol = var.healthtcheck_protocol
+     port     = var.healthtcheck_port
+     protocol = var.healthtcheck_protocol
   }
 
   lifecycle {
@@ -95,6 +95,20 @@ resource "aws_launch_template" "wsa_autoscale" {
   iam_instance_profile {
     name = var.iam_profile
   }
+  block_device_mappings {
+    device_name = "/dev/sda1"
+   	ebs {
+   		delete_on_termination = false
+                encrypted = true
+ 	}
+     }	
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = {
+      Name = "${var.lt_name}-volume"
+    }
+  }
 }
 
 
@@ -102,18 +116,19 @@ resource "aws_launch_template" "wsa_autoscale" {
 #INFO : the following resource create the AutoScaling Group for the DATA PLANE Instances for the cluster
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
+data "aws_default_tags" "provider" {}
 
 resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-dp-ASG"
-  //availability_zones = ["cn-north-1a", "cn-north-1b","cn-north-1d"]
   desired_capacity   = var.desired
-  max_size           = var.desired + 1
-  min_size           = var.desired == 1 ? var.desired : var.desired - 1
+  max_size           = var.desired     //(+ 1)
+  min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
   health_check_type = "ELB"
+  health_check_grace_period = 600
   target_group_arns = [ aws_lb_target_group.swa_tg.arn ]   ############  NEW Addition to the DP autoscale only
   launch_template {
     id = aws_launch_template.wsa_autoscale.id
-    version = "$Latest"
+    version = aws_launch_template.wsa_autoscale.latest_version
   }
   enabled_metrics = [
     "GroupMinSize",
@@ -124,28 +139,31 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   ]
   metrics_granularity = "1Minute"
   vpc_zone_identifier = var.subnets
-  /*initial_lifecycle_hook {
-    name                 = "attachcpSecondaryNic"
-    default_result       = "CONTINUE"
-    heartbeat_timeout    = 60
-    lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
-  }*/
   lifecycle {
     create_before_destroy = true
   }
+
+  /*
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 30
+    }
+    triggers = ["tag"]
+  }*/
+  
+  dynamic "tag" {
+    for_each = data.aws_default_tags.provider.tags
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
+  }
+  
   tag {
         key = "Name"
         value = var.lt_name
-        propagate_at_launch = true
-  }
-  tag {
-        key = "Product"
-        value = "swa"
-        propagate_at_launch = true
-  }
-  tag {
-        key = "SWADeployment"
-        value = "cluster"
         propagate_at_launch = true
   }
   tag {
@@ -154,15 +172,10 @@ resource "aws_autoscaling_group" "autoscaled_group" {
         propagate_at_launch = true
   }
   tag {
-        key = "SWATenant"
-        value = var.swa_tenant
-        propagate_at_launch = true
-  }
-   tag {
         key = "autoScaledExp"
         value = true
         propagate_at_launch = true
   }
+ 
 }
-
 

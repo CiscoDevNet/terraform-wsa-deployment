@@ -45,7 +45,7 @@ resource "aws_lb" "swa_nlb" {
 resource "aws_lb_target_group" "swa_tg" {
   name        = "${var.swa_tenant}-TG"
   port        = var.tg_port
-  protocol    = var.var.tg_port
+  protocol    = var.tg_port
   vpc_id      = var.vpc_id
   target_type = "instance"
   health_check {

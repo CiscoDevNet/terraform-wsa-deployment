@@ -82,6 +82,8 @@ module "autoscaling_dp" {
   healthtcheck_protocol = var.healthtcheck_protocol
   listener_port = var.listener_port
   listener_protocol = var.listener_protocol
+  tg_port = var.tg_port
+  tg_protocol = var.tg_protocol
 }
 
 

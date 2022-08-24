@@ -54,3 +54,11 @@ variable "listener_port" {
 variable "listener_protocol" {
   type = string
 }
+
+variable "tg_port" {
+  type = number
+}
+
+variable "tg_protocol" {
+  type = string
+}

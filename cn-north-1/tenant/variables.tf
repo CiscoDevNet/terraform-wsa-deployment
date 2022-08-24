@@ -76,3 +76,13 @@ variable "listener_protocol" {
   type = string
   default = "TCP"
 }
+
+variable "tg_port" {
+  type = number
+  default = 3128
+}
+
+variable "tg_protocol" {
+  type = string
+  default = "TCP"
+}

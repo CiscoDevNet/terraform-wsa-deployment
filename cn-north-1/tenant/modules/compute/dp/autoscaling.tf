@@ -8,7 +8,7 @@ data "aws_subnets" "subnets_mgmt_public" {
           values= [var.vpc_id]
   }
    tags = {
-     swa_tenant = var.swa_tenant
+     SWATenant = var.swa_tenant
    }
 }
 

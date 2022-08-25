@@ -3,14 +3,14 @@ resource "aws_dynamodb_table" "dynamodb" {
   billing_mode   = "PROVISIONED"
   read_capacity  = 20
   write_capacity = 20
-  hash_key       = var.swa_tenant
+  hash_key       = "swa_release_tag"
 
   attribute {
-    name = var.swa_tenant
+    name = "swa_release_tag"
     type = "S"
   }
-
+  
   tags = {
-        Name = var.swa_tenant
+        Name = "${var.swa_tenant}-swa-id-db"
   }
 }

@@ -1,3 +1,5 @@
+data "aws_default_tags" "provider" {}
+
 resource "aws_instance" "upgrader"{
   vpc_security_group_ids = var.sg_autoscaling
   iam_instance_profile = var.iam_profile
@@ -8,7 +10,17 @@ resource "aws_instance" "upgrader"{
     SWARole = "upgrader"
     SWAUpgradeVersion = var.upgrade_version
     Name = "${var.swa_tenant}-upgrader"
- } 
+ }
+  metadata_options {
+    http_endpoint = "enabled"
+    instance_metadata_tags = "enabled"
+  }
+  volume_tags = merge(
+    data.aws_default_tags.provider.tags,
+    {
+      Name = "${var.swa_tenant}-upgrader-volume"
+    }
+  ) 
 }
 
 

@@ -4,6 +4,14 @@
 #INFO: the following resource block creates the IAM policy
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
+data "aws_caller_identity" "current" {}
+
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+
+data "aws_region" "current_region" {
+}
 
 resource "aws_iam_policy" "eip_policy" {
   name = "${var.swa_tenant}-eip-policy"
@@ -19,9 +27,9 @@ resource "aws_iam_policy" "eip_policy" {
                 "ec2:AssociateAddress"
             ],
             "Resource": [
-                "arn:aws-cn:ec2:*:710117294258:instance/*",
-                "arn:aws-cn:ec2:*:710117294258:elastic-ip/*",
-                "arn:aws-cn:ec2:*:710117294258:network-interface/*"
+                "${var.ec2_arn}:*:${data.aws_caller_identity.current.account_id}:instance/*",
+                "${var.ec2_arn}:*:${data.aws_caller_identity.current.account_id}:elastic-ip/*",
+                "${var.ec2_arn}:*:${data.aws_caller_identity.current.account_id}:network-interface/*"
             ]
         },
         {
@@ -48,7 +56,7 @@ resource "aws_iam_policy" "dynamodb_policy" {
         {
             "Effect": "Allow",
             "Action": [
-                "dynamodb:*"
+                "dynamodb:UpdateItem"
             ],
             "Resource": [
                 "${var.dynamodb_arn}"
@@ -58,6 +66,23 @@ resource "aws_iam_policy" "dynamodb_policy" {
 })
 }
 
+
+resource "aws_iam_policy" "createtag_policy" {
+  name = "${var.swa_tenant}-createtag-policy"
+  path = "/"
+  description = "createtag Policy"
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "arn:aws-cn:ec2:cn-north-1:710117294258:instance/*"
+        },
+    ]
+})
+}
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO: the following resource block creates the IAM Role
@@ -128,6 +153,13 @@ resource "aws_iam_policy_attachment" "eip_policy_attach" {
   name = "Attaching eip policy to Role"
   roles = [aws_iam_role.ec2_role.name]
   policy_arn = aws_iam_policy.eip_policy.arn
+}
+
+
+resource "aws_iam_policy_attachment" "createtag_attachment" {
+  name = "Attaching to createtag policy to Role"
+  roles = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.createtag_policy.arn
 }
 
 

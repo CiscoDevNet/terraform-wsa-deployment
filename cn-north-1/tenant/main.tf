@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "cn-north-1"
+  region = "cn-northwest-1"
   default_tags {
    tags = {
     Product = "swa"

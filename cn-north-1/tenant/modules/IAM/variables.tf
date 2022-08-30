@@ -19,6 +19,12 @@ variable "bucket_arn" {
 variable "dynamodb_arn" {
   type = string
 }
+
+variable "ec2_arn" {
+  type = string
+  default = "arn:aws-cn:ec2"
+}
+
 //variable "dnynamoDB_arn" {
 //  type = string
 //}

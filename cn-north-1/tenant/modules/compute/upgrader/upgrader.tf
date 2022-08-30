@@ -23,7 +23,6 @@ resource "aws_instance" "upgrader"{
   ) 
 }
 
-
 /*
 resource "aws_network_interface" "upgrade_interface" {
   subnet_id   = tolist(var.subnets)[1]

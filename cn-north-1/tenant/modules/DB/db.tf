@@ -14,3 +14,15 @@ resource "aws_dynamodb_table" "dynamodb" {
         Name = "${var.swa_tenant}-swa-id-db"
   }
 }
+
+
+### Conctructing ARN for to pass the value in IAM module
+
+locals {
+construct_arn1 = replace(aws_dynamodb_table.dynamodb.arn, "dynamodb", "ec2")
+construct_arn2 = split(":", local.construct_arn1)
+}
+
+output "arn" {
+  value = "${local.construct_arn2[0]}:${local.construct_arn2[1]}:${local.construct_arn2[2]}:${local.construct_arn2[3]}:${local.construct_arn2[4]}"
+}

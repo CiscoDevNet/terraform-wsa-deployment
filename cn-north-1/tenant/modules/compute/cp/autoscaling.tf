@@ -19,8 +19,8 @@ resource "aws_launch_template" "wsa_autoscale" {
   block_device_mappings {
     device_name = "/dev/sda1"
         ebs {
-                delete_on_termination = false
-                encrypted = true
+                delete_on_termination = true
+                encrypted = false
         }
      }
   tag_specifications {

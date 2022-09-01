@@ -2,13 +2,13 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      ##version = "~> 3.72"
+      version = "~> 3.72"
     }
   }
 }
 
 provider "aws" {
-  region = "cn-north-1"
+  region = "cn-northwest-1"
   default_tags {
    tags = {
     Product = "swa"
@@ -37,6 +37,7 @@ module "iam" {
   swa_tenant = var.swa_tenant
   bucket_arn = module.s3.bucket_arn
   dynamodb_arn = module.DB.dynamodb_arn
+  arn = module.DB.arn
 }
 
 module "DB" {

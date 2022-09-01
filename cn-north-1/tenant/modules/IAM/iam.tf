@@ -4,6 +4,14 @@
 #INFO: the following resource block creates the IAM policy
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
+data "aws_caller_identity" "current" {}
+
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+
+data "aws_region" "current_region" {
+}
 
 resource "aws_iam_policy" "eip_policy" {
   name = "${var.swa_tenant}-eip-policy"
@@ -19,9 +27,9 @@ resource "aws_iam_policy" "eip_policy" {
                 "ec2:AssociateAddress"
             ],
             "Resource": [
-                "arn:aws-cn:ec2:*:710117294258:instance/*",
-                "arn:aws-cn:ec2:*:710117294258:elastic-ip/*",
-                "arn:aws-cn:ec2:*:710117294258:network-interface/*"
+                "${var.arn}:instance/*",
+                "${var.arn}:elastic-ip/*",
+                "${var.arn}:network-interface/*"
             ]
         },
         {
@@ -31,7 +39,7 @@ resource "aws_iam_policy" "eip_policy" {
                 "ec2:DescribeAddresses",
                 "ec2:DescribeInstances"
             ],
-            "Resource": "*"
+            "Resource": "${var.arn}:instance/*"
         },
     ]
   })
@@ -48,11 +56,17 @@ resource "aws_iam_policy" "dynamodb_policy" {
         {
             "Effect": "Allow",
             "Action": [
-                "dynamodb:*"
+                "dynamodb:UpdateItem"
             ],
             "Resource": [
                 "${var.dynamodb_arn}"
                 ]
+        },
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource":  "${var.arn}:instance/*"
         },
     ]
 })
@@ -129,6 +143,7 @@ resource "aws_iam_policy_attachment" "eip_policy_attach" {
   roles = [aws_iam_role.ec2_role.name]
   policy_arn = aws_iam_policy.eip_policy.arn
 }
+
 
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##

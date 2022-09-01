@@ -19,6 +19,7 @@ variable "bucket_arn" {
 variable "dynamodb_arn" {
   type = string
 }
-//variable "dnynamoDB_arn" {
-//  type = string
-//}
+
+variable "arn" {
+  type = string
+}

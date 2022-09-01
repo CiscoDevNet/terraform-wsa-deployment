@@ -27,9 +27,9 @@ resource "aws_iam_policy" "eip_policy" {
                 "ec2:AssociateAddress"
             ],
             "Resource": [
-                "${var.ec2_arn}:*:${data.aws_caller_identity.current.account_id}:instance/*",
-                "${var.ec2_arn}:*:${data.aws_caller_identity.current.account_id}:elastic-ip/*",
-                "${var.ec2_arn}:*:${data.aws_caller_identity.current.account_id}:network-interface/*"
+                "${var.arn}:instance/*",
+                "${var.arn}:elastic-ip/*",
+                "${var.arn}:network-interface/*"
             ]
         },
         {
@@ -39,7 +39,7 @@ resource "aws_iam_policy" "eip_policy" {
                 "ec2:DescribeAddresses",
                 "ec2:DescribeInstances"
             ],
-            "Resource": "*"
+            "Resource": "${var.arn}:instance/*"
         },
     ]
   })
@@ -62,27 +62,16 @@ resource "aws_iam_policy" "dynamodb_policy" {
                 "${var.dynamodb_arn}"
                 ]
         },
-    ]
-})
-}
-
-
-resource "aws_iam_policy" "createtag_policy" {
-  name = "${var.swa_tenant}-createtag-policy"
-  path = "/"
-  description = "createtag Policy"
-  policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
         {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": "ec2:CreateTags",
-            "Resource": "arn:aws-cn:ec2:cn-north-1:710117294258:instance/*"
+            "Resource":  "*"
         },
     ]
 })
 }
+
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO: the following resource block creates the IAM Role
@@ -155,12 +144,6 @@ resource "aws_iam_policy_attachment" "eip_policy_attach" {
   policy_arn = aws_iam_policy.eip_policy.arn
 }
 
-
-resource "aws_iam_policy_attachment" "createtag_attachment" {
-  name = "Attaching to createtag policy to Role"
-  roles = [aws_iam_role.ec2_role.name]
-  policy_arn = aws_iam_policy.createtag_policy.arn
-}
 
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##

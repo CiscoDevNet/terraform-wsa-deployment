@@ -20,11 +20,6 @@ variable "dynamodb_arn" {
   type = string
 }
 
-variable "ec2_arn" {
+variable "arn" {
   type = string
-  default = "arn:aws-cn:ec2"
 }
-
-//variable "dnynamoDB_arn" {
-//  type = string
-//}

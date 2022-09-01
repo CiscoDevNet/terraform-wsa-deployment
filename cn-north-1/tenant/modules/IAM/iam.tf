@@ -66,7 +66,7 @@ resource "aws_iam_policy" "dynamodb_policy" {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": "ec2:CreateTags",
-            "Resource":  "*"
+            "Resource":  "${var.arn}:instance/*"
         },
     ]
 })

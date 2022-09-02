@@ -39,7 +39,7 @@ resource "aws_iam_policy" "eip_policy" {
                 "ec2:DescribeAddresses",
                 "ec2:DescribeInstances"
             ],
-            "Resource": "${var.arn}:instance/*"
+            "Resource": "*"
         },
     ]
   })

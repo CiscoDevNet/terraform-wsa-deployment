@@ -8,6 +8,7 @@ variable "iam_profile" {
 
 variable "sg_autoscaling" {
   type = set(string)
+  //type = string
 }
 
 variable "swa_tenant" {

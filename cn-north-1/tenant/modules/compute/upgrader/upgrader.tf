@@ -1,7 +1,16 @@
 data "aws_default_tags" "provider" {}
 
+data "aws_security_group" "selected" {
+   tags = {
+      SWATenant = var.swa_tenant
+      //Name = var.sg_autoscaling
+ }
+}
+
+
 resource "aws_instance" "upgrader"{
-  vpc_security_group_ids = var.sg_autoscaling
+  //security_groups = var.sg_autoscaling
+  vpc_security_group_ids = [data.aws_security_group.selected.id]
   iam_instance_profile = var.iam_profile
   ami = var.image_id
   subnet_id   = tolist(var.subnets)[0]
@@ -20,14 +29,10 @@ resource "aws_instance" "upgrader"{
     {
       Name = "${var.swa_tenant}-upgrader-volume"
     }
-  ) 
+  )
 }
 
-/*
-resource "aws_network_interface" "upgrade_interface" {
-  subnet_id   = tolist(var.subnets)[1]
-  security_groups = var.sg_autoscaling
-  tags = {
-    Name = "upgrade_network_interface"
-  }
+/*resource "aws_network_interface_sg_attachment" "sg_attachment" {
+  security_group_id    = data.aws_security_group.selected.id
+  network_interface_id = aws_instance.upgrader.primary_network_interface_id
 }*/

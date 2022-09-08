@@ -104,15 +104,16 @@ module "autoscaling_cp" {
 }
 
 module "upgrader" {
-  count = var.upgrade
+  //count = var.upgrade
+  count = var.upgrade_version != "" ? 1 : 0
   source = "./modules/compute/upgrader"
   subnets = module.network.subnet_tenant_public
   iam_profile = module.iam.ec2_profile
   swa_tenant = var.swa_tenant
   swa_role = "upgrader" 
   sg_autoscaling = [module.security_group.mgmt_sec_group]
+  //sg_autoscaling = module.security_group.mgmt_sec_group
   instance_type = var.launch_config_cp[count.index].instance_type
   image_id = var.launch_config_cp[count.index].ami_id
-  upgrade_version = var.upgrade_version
- 
+  upgrade_version = var.upgrade_version 
 }

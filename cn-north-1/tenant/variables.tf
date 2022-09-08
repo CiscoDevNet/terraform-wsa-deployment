@@ -52,10 +52,10 @@ variable "launch_config_cp" {
 ###Upgrade
 ########################
 
-variable "upgrade" {
+/*variable "upgrade" {
   type = number
   default = 0
-}
+}*/
 
 variable "healthtcheck_port" {
   type = number

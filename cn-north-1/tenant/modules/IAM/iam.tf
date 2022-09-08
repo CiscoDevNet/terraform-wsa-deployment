@@ -24,7 +24,8 @@ resource "aws_iam_policy" "eip_policy" {
             "Effect": "Allow",
             "Action": [
                 "ec2:DisassociateAddress",
-                "ec2:AssociateAddress"
+                "ec2:AssociateAddress",
+                "ec2:StopInstances"
             ],
             "Resource": [
                 "${var.arn}:instance/*",
@@ -37,7 +38,8 @@ resource "aws_iam_policy" "eip_policy" {
             "Effect": "Allow",
             "Action": [
                 "ec2:DescribeAddresses",
-                "ec2:DescribeInstances"
+                "ec2:DescribeInstances",
+                "ec2:DescribeNetworkInterfaces"
             ],
             "Resource": "*"
         },

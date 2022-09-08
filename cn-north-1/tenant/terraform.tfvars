@@ -11,6 +11,6 @@ launch_config_dp = [
 launch_config_cp = [
         {ami_id = "ami-04689f7cae4c2bd2f" ,instance_type = "t3.xlarge" , desired = 3}
 ]
-upgrade = 0
+
 upgrade_version = "10.0"
 swa_domain = "orient.cn"

@@ -6,10 +6,10 @@ subnet_config = [
 ]
 swa_tenant = "orient"
 launch_config_dp = [
-	{ami_id = "ami-04689f7cae4c2bd2f" ,instance_type = "t3.xlarge", desired = 2}
+	{ami_id = "ami-04689f7cae4c2bd2f" ,instance_type = "t3.large", desired = 2}
 ]
 launch_config_cp = [
-        {ami_id = "ami-04689f7cae4c2bd2f" ,instance_type = "t3.xlarge" , desired = 3}
+        {ami_id = "ami-04689f7cae4c2bd2f" ,instance_type = "t3.large" , desired = 3}
 ]
 
 upgrade_version = ""

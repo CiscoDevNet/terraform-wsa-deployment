@@ -25,7 +25,7 @@ resource "aws_iam_policy" "eip_policy" {
             "Action": [
                 "ec2:DisassociateAddress",
                 "ec2:AssociateAddress",
-                "ec2:StopInstances"
+                "autoscaling:SetInstanceHealth"
             ],
             "Resource": [
                 "${var.arn}:instance/*",
@@ -39,7 +39,8 @@ resource "aws_iam_policy" "eip_policy" {
             "Action": [
                 "ec2:DescribeAddresses",
                 "ec2:DescribeInstances",
-                "ec2:DescribeNetworkInterfaces"
+                "ec2:DescribeNetworkInterfaces",
+                "elasticloadbalancing:DescribeLoadBalancers"
             ],
             "Resource": "*"
         },

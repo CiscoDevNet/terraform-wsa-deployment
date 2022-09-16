@@ -25,7 +25,7 @@ resource "aws_iam_policy" "eip_policy" {
             "Action": [
                 "ec2:DisassociateAddress",
                 "ec2:AssociateAddress",
-                "ec2:StopInstances"
+                "autoscaling:SetInstanceHealth"
             ],
             "Resource": [
                 "${var.arn}:instance/*",
@@ -33,13 +33,26 @@ resource "aws_iam_policy" "eip_policy" {
                 "${var.arn}:network-interface/*"
             ]
         },
+    ]
+  })
+
+}
+
+resource "aws_iam_policy" "ec2_policy" {
+  name = "${var.swa_tenant}-ec2-policy"
+  path = "/"
+  description = "creating ec2 policy"
+  policy = jsonencode({
+  "Version": "2012-10-17",
+    "Statement": [
         {
             "Sid": "VisualEditor1",
             "Effect": "Allow",
             "Action": [
                 "ec2:DescribeAddresses",
                 "ec2:DescribeInstances",
-                "ec2:DescribeNetworkInterfaces"
+                "ec2:DescribeNetworkInterfaces",
+                "elasticloadbalancing:DescribeLoadBalancers"
             ],
             "Resource": "*"
         },
@@ -47,6 +60,7 @@ resource "aws_iam_policy" "eip_policy" {
   })
 
 }
+
 
 resource "aws_iam_policy" "dynamodb_policy" {
   name = "${var.swa_tenant}-dynamodb-policy"
@@ -146,6 +160,11 @@ resource "aws_iam_policy_attachment" "eip_policy_attach" {
   policy_arn = aws_iam_policy.eip_policy.arn
 }
 
+resource "aws_iam_policy_attachment" "ec2_policy_attach" {
+  name = "Attaching ec2 policy to Role"
+  roles = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.ec2_policy.arn
+}
 
 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##

@@ -2,37 +2,35 @@
 #INFO: the following data block pics up those Subnets from the list that are specific to our VPC and have the SWA-Tenant tag
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--####--##--##--##--##--
 
-data "aws_subnets" "subnets_mgmt_public" {
-  filter {
-          name = "vpc-id"
-          values= [var.vpc_id]
-  }
-   tags = {
-     SWATenant = var.swa_tenant
+locals {
+  subnet_ids = tolist(var.subnets)
+  aid_emptylist = [for k in var.subnets: ""]
+  allocation_ids = length(var.nlb-eip) == 0 ? local.aid_emptylist : tolist(var.nlb-eip)
+  subnets_eip = [
+    for sid,aid in zipmap(local.subnet_ids,local.allocation_ids) : {
+      subnet_id = sid
+      allocation_id = aid
    }
+ ]
 }
-
-
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO: the following resource block creates the NetworkLoadBalancer using the subnet filtered above
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-
 
 resource "aws_lb" "swa_nlb" {
   name               = "${var.swa_tenant}-NLB"
   internal           = false
   load_balancer_type = "network"
-  //subnets            = [for subnet in data.aws_subnets.subnets_mgmt_public.ids : subnet]
-  subnets  = data.aws_subnets.subnets_mgmt_public.ids
+  dynamic "subnet_mapping" {
+    for_each = local.subnets_eip
+    content {
+      subnet_id = subnet_mapping.value["subnet_id"]
+      allocation_id = subnet_mapping.value["allocation_id"]
+    }
+  }
   enable_cross_zone_load_balancing = false
   enable_deletion_protection = false
-/*
-  tags = merge(
-        var.common_tags,
-        {
-                "Environment"="DEV"
-        },
-        )*/
+
 }
 
 
@@ -41,7 +39,6 @@ resource "aws_lb" "swa_nlb" {
 #INFO: the following resource block create a Target Group for the NLB created above
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-
 resource "aws_lb_target_group" "swa_tg" {
   name        = "${var.swa_tenant}-TG"
   port        = var.tg_port
@@ -49,8 +46,9 @@ resource "aws_lb_target_group" "swa_tg" {
   vpc_id      = var.vpc_id
   target_type = "instance"
   health_check {
-     port     = var.healthtcheck_port
-     protocol = var.healthtcheck_protocol
+     port = var.tg_healthport
+     protocol = var.tg_healthprotocol
+     path = var.tg_healthpath
   }
 
   lifecycle {
@@ -65,9 +63,10 @@ resource "aws_lb_target_group" "swa_tg" {
 
 
 resource "aws_lb_listener" "k3s_lb_http" {
+  count = length(var.lb-listner)
   load_balancer_arn = aws_lb.swa_nlb.id
-  port              = var.listener_port
-  protocol          = var.listener_protocol
+  port = var.lb-listner[count.index].port
+  protocol = var.lb-listner[count.index].protocol
 
   default_action {
     target_group_arn = aws_lb_target_group.swa_tg.id
@@ -179,4 +178,3 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   }
  
 }
-

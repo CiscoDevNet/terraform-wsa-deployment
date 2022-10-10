@@ -10,6 +10,11 @@ variable "sg_autoscaling" {
   type = set(string)
 }
 
+variable "nlb-eip" {
+  type = list
+}
+
+
 variable "swa_tenant" {
   type = string
 }
@@ -39,13 +44,6 @@ variable "desired" {
   type = number
 }
 
-variable "healthtcheck_port" {
-  type = number
-}
-
-variable "healthtcheck_protocol" {
-  type = string
-}
 
 variable "listener_port" {
   type = number
@@ -61,4 +59,20 @@ variable "tg_port" {
 
 variable "tg_protocol" {
   type = string
+}
+
+variable "tg_healthport" {
+  type = string
+}
+
+variable "tg_healthprotocol" {
+  type = string
+}
+
+variable "tg_healthpath" {
+  type = string
+}
+
+variable "lb-listner" {
+  type = list (object({ port = string, protocol  = string}))
 }

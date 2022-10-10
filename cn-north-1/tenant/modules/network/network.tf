@@ -27,8 +27,6 @@ resource "aws_subnet" "subnet" {
 
 
 
-
-
 data "aws_internet_gateway" "wsa_igw" {
   filter {
     name   = "attachment.vpc-id"
@@ -83,3 +81,17 @@ data "aws_subnets" "subnet_tenant_public" {
      SWATenant = var.swa_tenant
    }
 }
+
+
+resource "aws_eip" "nlb-eip" {
+  depends_on = [
+  aws_subnet.subnet
+  ]
+  count = var.env == "prod" ? length(var.subnet_config) : 0
+  vpc = true
+
+  tags = {
+    Name = "${var.swa_tenant}-nlb-${count.index + 1}-eip"
+  }
+}
+

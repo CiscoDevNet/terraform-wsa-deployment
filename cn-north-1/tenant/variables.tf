@@ -52,19 +52,23 @@ variable "launch_config_cp" {
 ###Upgrade
 ########################
 
-/*variable "upgrade" {
-  type = number
-  default = 0
-}*/
-
-variable "healthtcheck_port" {
-  type = number
-  default = 8443 
+variable "tg_healthport" {
+  type = string
+  default =  "4431"
 }
 
-variable "healthtcheck_protocol" {
+variable "env" {
+  type = string
+}
+
+variable "tg_healthprotocol" {
   type = string
   default = "HTTPS"
+}
+
+variable "tg_healthpath" {
+  type = string
+  default = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
 }
 
 variable "listener_port" {
@@ -85,4 +89,8 @@ variable "tg_port" {
 variable "tg_protocol" {
   type = string
   default = "TCP"
+}
+
+variable "lb-listner" {
+  type = list (object({ port = string, protocol  = string}))
 }

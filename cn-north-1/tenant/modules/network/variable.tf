@@ -10,3 +10,12 @@ variable "swa_tenant" {
   type = string
 }
 
+variable "subnets" {
+  type = set(string)
+
+}
+
+variable "env" {
+  type = string
+}
+

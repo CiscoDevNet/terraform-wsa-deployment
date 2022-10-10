@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "cn-northwest-1"
+  region = "cn-north-1"
   default_tags {
    tags = {
     Product = "swa"
@@ -28,6 +28,8 @@ module "s3" {
 module "network" {
   source = "./modules/network"
   vpc_id = var.vpc_id
+  subnets = module.network.subnet_tenant_public
+  env = var.env
   subnet_config = var.subnet_config
   swa_tenant = var.swa_tenant
 }
@@ -45,6 +47,7 @@ module "DB" {
   swa_tenant = var.swa_tenant
 }
 
+
 ############################
 ############# SECURITY GROUP
 ############################
@@ -55,6 +58,16 @@ data "aws_vpc" "vpc_cidr" {
 
 output "vpc_cidr_from_data" {
   value = data.aws_vpc.vpc_cidr.cidr_block_associations[0].cidr_block
+}
+
+
+output "subnet_ip" {
+  value = module.network.subnet_tenant_public
+}
+
+
+output "eip_ip" {
+  value = module.network.nlb-eip
 }
 
 module "security_group" {
@@ -78,9 +91,12 @@ module "autoscaling_dp" {
   desired = var.launch_config_dp[count.index].desired
   swa_tenant = var.swa_tenant
   swa_role = "data"
+  nlb-eip = module.network.nlb-eip
   vpc_id = var.vpc_id
-  healthtcheck_port = var.healthtcheck_port
-  healthtcheck_protocol = var.healthtcheck_protocol
+  lb-listner = var.lb-listner
+  tg_healthport = var.tg_healthport
+  tg_healthprotocol = var.tg_healthprotocol
+  tg_healthpath = var.tg_healthpath
   listener_port = var.listener_port
   listener_protocol = var.listener_protocol
   tg_port = var.tg_port
@@ -104,7 +120,6 @@ module "autoscaling_cp" {
 }
 
 module "upgrader" {
-  //count = var.upgrade
   count = var.upgrade_version != "" ? 1 : 0
   source = "./modules/compute/upgrader"
   subnets = module.network.subnet_tenant_public
@@ -112,8 +127,9 @@ module "upgrader" {
   swa_tenant = var.swa_tenant
   swa_role = "upgrader" 
   sg_autoscaling = [module.security_group.mgmt_sec_group]
-  //sg_autoscaling = module.security_group.mgmt_sec_group
   instance_type = var.launch_config_cp[count.index].instance_type
   image_id = var.launch_config_cp[count.index].ami_id
   upgrade_version = var.upgrade_version 
 }
+
+

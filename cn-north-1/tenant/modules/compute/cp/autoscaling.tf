@@ -6,9 +6,8 @@ resource "aws_launch_template" "wsa_autoscale" {
   name = "${var.lt_name}-lt"
   image_id = var.image_id
   instance_type = var.instance_type
-  ##key_name = var.key_name
   update_default_version = "true"
-  vpc_security_group_ids = var.sg_autoscaling
+ vpc_security_group_ids = var.sg_autoscaling
   metadata_options {
     http_endpoint = "enabled"
     instance_metadata_tags = "enabled"
@@ -28,7 +27,7 @@ resource "aws_launch_template" "wsa_autoscale" {
     resource_type = "volume"
 
     tags = {
-      Name = "${var.lt_name}-volume"
+      name = "${var.lt_name}_volume"
     }
   }
 }
@@ -44,7 +43,8 @@ data "aws_default_tags" "provider" {}
 resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-cp-ASG"
   desired_capacity   = var.desired
-  max_size           = var.desired     //(+ 1)
+  //security_groups = [var.sg_autoscaling]
+  max_size           = var.desired    //(+ 1)
   min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
   launch_template {
     id = aws_launch_template.wsa_autoscale.id
@@ -78,12 +78,12 @@ resource "aws_autoscaling_group" "autoscaled_group" {
         propagate_at_launch = true
   }
   tag {
-        key = "SWARole"
+        key = "swa_role"
         value = var.swa_role
         propagate_at_launch = true
   }
   tag {
-        key = "autoScaledExp"
+        key = "autoscaled_exp"
         value = true
         propagate_at_launch = true
   }  

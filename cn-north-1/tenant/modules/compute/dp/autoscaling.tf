@@ -106,7 +106,7 @@ resource "aws_launch_template" "wsa_autoscale" {
     resource_type = "volume"
 
     tags = {
-      Name = "${var.lt_name}-volume"
+      name = "${var.lt_name}_volume"
     }
   }
 }
@@ -142,15 +142,6 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   lifecycle {
     create_before_destroy = true
   }
-
-  /*
-  instance_refresh {
-    strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 30
-    }
-    triggers = ["tag"]
-  }*/
   
   dynamic "tag" {
     for_each = data.aws_default_tags.provider.tags
@@ -162,17 +153,17 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   }
   
   tag {
-        key = "Name"
+        key = "name"
         value = var.lt_name
         propagate_at_launch = true
   }
   tag {
-        key = "SWARole"
+        key = "swa_role"
         value = var.swa_role
         propagate_at_launch = true
   }
   tag {
-        key = "autoScaledExp"
+        key = "autocaled_exp"
         value = true
         propagate_at_launch = true
   }

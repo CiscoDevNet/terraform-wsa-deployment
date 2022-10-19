@@ -21,6 +21,7 @@ variable "subnet_config" {
   type = list(object({cidr_block = string, availability_zone = string}))
 }
 
+
 variable "swa_domain" {
   type = string
 }

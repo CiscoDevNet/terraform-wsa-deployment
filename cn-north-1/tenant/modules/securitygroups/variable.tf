@@ -12,3 +12,9 @@ variable "sg_name" {
 variable "swa_tenant" {
   type = string
 }
+
+variable "subnets" {
+  type = set(string)
+}
+
+

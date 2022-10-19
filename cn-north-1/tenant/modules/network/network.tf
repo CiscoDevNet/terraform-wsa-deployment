@@ -8,7 +8,7 @@
 resource "aws_subnet" "subnet" {
   count = length(var.subnet_config)
   tags = {
-      Name = "${var.swa_tenant}-${var.subnet_config[count.index].availability_zone}-subnet"
+      name = "${var.swa_tenant}_${var.subnet_config[count.index].availability_zone}_subnet"
   }
   cidr_block = var.subnet_config[count.index].cidr_block
   availability_zone = var.subnet_config[count.index].availability_zone
@@ -43,7 +43,7 @@ resource "aws_route_table" "swa_route" {
         cidr_block = "0.0.0.0/0"
         gateway_id = "${element(split("/", data.aws_internet_gateway.wsa_igw.arn),1)}"
   }
-  tags = { "Name" = "${var.swa_tenant}-${data.aws_region.current_region.name}-RT" }
+  tags = { "name" = "${var.swa_tenant}_${data.aws_region.current_region.name}_rt" }
 }
 
 ##############################################
@@ -61,7 +61,7 @@ resource "aws_route_table_association" "rt_associate_public" {
 }
 
 resource "aws_eip" "eip" {
-  tags = { "Name" = "${var.swa_tenant}-cp-eip" }
+  tags = { "name" = "${var.swa_tenant}_cp_eip" }
 }
 
 
@@ -78,7 +78,7 @@ data "aws_subnets" "subnet_tenant_public" {
                 values= [var.vpc_id]
         }
    tags = {
-     SWATenant = var.swa_tenant
+     swa_tenant = var.swa_tenant
    }
 }
 
@@ -91,7 +91,7 @@ resource "aws_eip" "nlb-eip" {
   vpc = true
 
   tags = {
-    Name = "${var.swa_tenant}-nlb-${count.index + 1}-eip"
-  }
+    name = "${var.swa_tenant}_nlb_${count.index + 1}_eip"
+ }
 }
 

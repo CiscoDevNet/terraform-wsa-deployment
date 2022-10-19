@@ -52,7 +52,8 @@ resource "aws_iam_policy" "ec2_policy" {
                 "ec2:DescribeAddresses",
                 "ec2:DescribeInstances",
                 "ec2:DescribeNetworkInterfaces",
-                "elasticloadbalancing:DescribeLoadBalancers"
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "cloudwatch:PutMetricData"
             ],
             "Resource": "*"
         },

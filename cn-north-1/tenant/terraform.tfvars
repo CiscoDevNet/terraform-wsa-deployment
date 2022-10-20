@@ -18,5 +18,5 @@ lb-listner = [
 ]
 
 upgrade_version = ""
-env = "prod"
+env = ""
 swa_domain = "orient.cn"

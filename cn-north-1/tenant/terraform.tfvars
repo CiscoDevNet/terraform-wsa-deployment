@@ -19,4 +19,4 @@ lb-listner = [
 
 upgrade_version = ""
 env = ""
-swa_domain = "orient.cn"
+swa_domain = "philips.cn"

@@ -1,4 +1,6 @@
-resource "aws_cloudwatch_event_rule" "asgevents" {
+data "aws_caller_identity" "current" {}
+
+/*resource "aws_cloudwatch_event_rule" "asgevents" {
   name        = "capture-ec2-scaling-events"
   description = "Capture all EC2 scaling events"
 
@@ -51,4 +53,73 @@ data "aws_iam_policy_document" "example_log_policy" {
 resource "aws_cloudwatch_event_target" "asgevent_target" {
   rule = aws_cloudwatch_event_rule.asgevents.name
   arn  = aws_cloudwatch_log_group.asglog_group.arn
+}*/
+
+resource "aws_sns_topic" "user_updates" {
+  name = "${var.swa_tenant}-alert-topic"
+  display_name = "Alert!!"
+}
+
+
+resource "aws_sns_topic_policy" "default" {
+  arn = aws_sns_topic.user_updates.arn
+
+  policy = data.aws_iam_policy_document.sns_topic_policy.json
+}
+
+data "aws_iam_policy_document" "sns_topic_policy" {
+  policy_id = "__default_policy_ID"
+
+  statement {
+    actions = [
+        "SNS:Publish",
+        "SNS:RemovePermission",
+        "SNS:SetTopicAttributes",
+        "SNS:DeleteTopic",
+        "SNS:ListSubscriptionsByTopic",
+        "SNS:GetTopicAttributes",
+        "SNS:AddPermission",
+        "SNS:Subscribe"
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceOwner"
+
+      values = [
+        data.aws_caller_identity.current.account_id,
+      ]
+    }
+
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    resources = [
+      aws_sns_topic.user_updates.arn,
+    ]
+
+    sid = "__default_statement_ID"
+  }
+  statement {
+    actions = [
+        "SNS:Subscribe",
+    ]
+
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    resources = [
+      aws_sns_topic.user_updates.arn,
+    ]
+
+    sid = "__console_statement_ID"
+  }
 }

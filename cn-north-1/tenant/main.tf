@@ -129,4 +129,5 @@ module "upgrader" {
 
 module "monitoring" {
   source = "./modules/monitoring"
+  swa_tenant = var.swa_tenant
 }

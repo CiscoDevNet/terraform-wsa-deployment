@@ -16,7 +16,7 @@ resource "aws_instance" "upgrader"{
   instance_type = var.instance_type 
   tags = {
     swa_role = "upgrader"
-    swa_upgradeVersion = var.upgrade_version
+    swa_upgrade_version = var.upgrade_version
     name = "${var.swa_tenant}_upgrader"
  }
   metadata_options {

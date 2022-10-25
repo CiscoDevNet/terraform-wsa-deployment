@@ -7,7 +7,7 @@ resource "aws_launch_template" "wsa_autoscale" {
   image_id = var.image_id
   instance_type = var.instance_type
   update_default_version = "true"
- vpc_security_group_ids = var.sg_autoscaling
+  vpc_security_group_ids = var.sg_autoscaling
   metadata_options {
     http_endpoint = "enabled"
     instance_metadata_tags = "enabled"
@@ -43,7 +43,6 @@ data "aws_default_tags" "provider" {}
 resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-cp-ASG"
   desired_capacity   = var.desired
-  //security_groups = [var.sg_autoscaling]
   max_size           = var.desired    //(+ 1)
   min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
   launch_template {

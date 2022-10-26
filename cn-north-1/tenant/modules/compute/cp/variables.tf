@@ -39,3 +39,17 @@ variable "desired" {
 variable "swa_tenant" {
  type = string
 }
+
+variable "volume_termination" {
+ type = string
+}
+
+variable "cp_max_size" {
+  type = string
+  default = 3
+}
+
+variable "cp_min_size" {
+  type = string
+  default = 3
+}

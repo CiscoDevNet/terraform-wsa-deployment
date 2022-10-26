@@ -56,7 +56,7 @@ resource "aws_cloudwatch_event_target" "asgevent_target" {
 }*/
 
 resource "aws_sns_topic" "user_updates" {
-  name = "${var.swa_tenant}-alert-topic"
+  name = "${var.swa_tenant}_web_alert"
   display_name = "Alert!!"
 }
 

@@ -98,7 +98,7 @@ resource "aws_launch_template" "wsa_autoscale" {
     device_name = "/dev/sda1"
    	ebs {
    		volume_size = 200
-                delete_on_termination = true
+                delete_on_termination = var.volume_termination
                 encrypted = false
  	}
      }	
@@ -121,7 +121,7 @@ data "aws_default_tags" "provider" {}
 resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-dp-ASG"
   desired_capacity   = var.desired
-  max_size           = var.desired     //(+ 1)
+  max_size           = var.dp_max_size     //(+ 1)
   min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
   health_check_type = "ELB"
   health_check_grace_period = 600

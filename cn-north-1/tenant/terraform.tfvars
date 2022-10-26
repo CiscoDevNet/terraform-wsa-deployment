@@ -5,7 +5,7 @@ subnet_config = [
 	{cidr_block="10.0.87.0/28",availability_zone="cn-north-1d"}
 ]
 
-swa_tenant = "tenant456"
+swa_tenant = "philips"
 
 
 launch_config_dp = [
@@ -23,6 +23,8 @@ lb-listner = [
 
 upgrade_version = ""
 env = ""
+volume_delete_on_termination = "true"
+
 swa_domain = "philips.cn"
 
 

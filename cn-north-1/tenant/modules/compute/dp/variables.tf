@@ -76,3 +76,17 @@ variable "tg_healthpath" {
 variable "lb-listner" {
   type = list (object({ port = string, protocol  = string}))
 }
+
+variable "volume_termination" {
+ type = string
+}
+
+variable "dp_max_size" {
+  type = string
+  default = 2
+}
+
+variable "dp_min_size" {
+  type = string
+  default = 3
+}

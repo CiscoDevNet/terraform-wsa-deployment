@@ -106,7 +106,7 @@ resource "aws_launch_template" "wsa_autoscale" {
     resource_type = "volume"
 
     tags = {
-      name = "${var.lt_name}_volume"
+      Name = "${var.lt_name}_volume"
     }
   }
 }
@@ -122,7 +122,7 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-dp-ASG"
   desired_capacity   = var.desired
   max_size           = var.dp_max_size     //(+ 1)
-  min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
+  min_size           = var.dp_min_size     //(== 1 ? var.desired : var.desired - 1)
   health_check_type = "ELB"
   health_check_grace_period = 600
   target_group_arns = [ aws_lb_target_group.swa_tg.arn ]   ############  NEW Addition to the DP autoscale only

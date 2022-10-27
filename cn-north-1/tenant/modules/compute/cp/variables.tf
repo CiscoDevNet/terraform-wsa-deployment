@@ -42,14 +42,13 @@ variable "swa_tenant" {
 
 variable "volume_termination" {
  type = string
+ default = "true"
 }
 
 variable "cp_max_size" {
   type = string
-  default = 3
 }
 
 variable "cp_min_size" {
   type = string
-  default = 3
 }

@@ -27,7 +27,7 @@ resource "aws_launch_template" "wsa_autoscale" {
     resource_type = "volume"
 
     tags = {
-      name = "${var.lt_name}_volume"
+      Name = "${var.lt_name}_volume"
     }
   }
 }
@@ -44,7 +44,7 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-cp-ASG"
   desired_capacity   = var.desired
   max_size           = var.cp_max_size    //(+ 1)
-  min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
+  min_size           = var.cp_min_size     //(== 1 ? var.desired : var.desired - 1)
   launch_template {
     id = aws_launch_template.wsa_autoscale.id
     version = "$Latest"

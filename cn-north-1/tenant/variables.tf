@@ -96,23 +96,3 @@ variable "lb-listner" {
   type = list (object({ port = string, protocol  = string}))
 }
 
-variable "volume_delete_on_termination" {
-  type = string
-}
-
-/*variable "cp_max-size" {
-  type = string
-}
-
-variable "cp_min_size" {
-  type = string
-}
-
-variable "dp_max-size" {
-  type = string
-}
-
-variable "dp_min_size" {
-  type = string
-}*/
-

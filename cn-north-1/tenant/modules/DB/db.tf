@@ -11,7 +11,7 @@ resource "aws_dynamodb_table" "dynamodb" {
   }
   
   tags = {
-        name = "${var.swa_tenant}_swa_id_db"
+        Name = "${var.swa_tenant}_swa_id_db"
   }
 }
 

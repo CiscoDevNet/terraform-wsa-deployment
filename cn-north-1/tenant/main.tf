@@ -82,7 +82,6 @@ module "autoscaling_dp" {
   lt_name = "${var.swa_tenant}-dp"
   image_id = var.launch_config_dp[count.index].ami_id
   instance_type = var.launch_config_dp[count.index].instance_type
-  volume_termination = var.volume_delete_on_termination
   desired = var.launch_config_dp[count.index].desired
   swa_tenant = var.swa_tenant
   swa_role = "data"
@@ -111,7 +110,6 @@ module "autoscaling_cp" {
   image_id = var.launch_config_cp[count.index].ami_id
   desired = var.launch_config_cp[count.index].desired
   instance_type = var.launch_config_cp[count.index].instance_type
-  volume_termination = var.volume_delete_on_termination
   swa_tenant = var.swa_tenant
   swa_role = "control"
   vpc_id = var.vpc_id

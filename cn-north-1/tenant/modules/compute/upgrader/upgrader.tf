@@ -17,7 +17,7 @@ resource "aws_instance" "upgrader"{
   tags = {
     swa_role = "upgrader"
     swa_upgrade_version = var.upgrade_version
-    name = "${var.swa_tenant}_upgrader"
+    Name = "${var.swa_tenant}_upgrader"
  }
   metadata_options {
     http_endpoint = "enabled"
@@ -26,7 +26,7 @@ resource "aws_instance" "upgrader"{
   volume_tags = merge(
     data.aws_default_tags.provider.tags,
     {
-      name = "${var.swa_tenant}_upgrader_volume"
+      Name = "${var.swa_tenant}_upgrader_volume"
     }
   )
 }

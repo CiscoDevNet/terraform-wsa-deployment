@@ -79,14 +79,15 @@ variable "lb-listner" {
 
 variable "volume_termination" {
  type = string
+ default = "true"
 }
 
 variable "dp_max_size" {
   type = string
-  default = 2
+  //default = 2
 }
 
 variable "dp_min_size" {
   type = string
-  default = 3
+  //default = 2
 }

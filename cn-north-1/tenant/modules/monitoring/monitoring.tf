@@ -122,4 +122,22 @@ data "aws_iam_policy_document" "sns_topic_policy" {
 
     sid = "__console_statement_ID"
   }
+  statement {
+    actions = [
+        "SNS:Publish",
+    ]
+
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    resources = [
+      aws_sns_topic.user_updates.arn,
+    ]
+
+    sid = "__console_statement_12"
+  }
 }

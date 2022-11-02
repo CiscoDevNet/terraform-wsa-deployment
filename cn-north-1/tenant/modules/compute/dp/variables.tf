@@ -74,8 +74,16 @@ variable "tg_healthpath" {
 }
 
 variable "lb-listner" {
-  type = list (object({ port = string, protocol  = string}))
+  type = list (object({ port = string, protocol  = string, tg = string }))
 }
+
+variable "lb_target_group" {
+  type = list (object({ name = string, port = string,  protocol  = string,  healthcheck_port = string, healthcheck_protocol = string, healthcheck_path = string }))
+}
+
+/*variable "pac_target_group" {
+  type = list (object({ name = string, port = string,  protocol  = string }))
+}*/
 
 variable "volume_termination" {
  type = string
@@ -90,4 +98,9 @@ variable "dp_max_size" {
 variable "dp_min_size" {
   type = string
   //default = 2
+}
+
+variable "dp_tg_port" {
+  type = string
+  default = "9001"
 }

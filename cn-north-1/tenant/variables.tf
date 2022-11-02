@@ -49,6 +49,11 @@ variable "launch_config_cp" {
   type = list (object({ ami_id = string, instance_type = string, desired = number}))
 }
 
+variable "env" {
+  type = string
+}
+
+
 ########################
 ###Upgrade
 ########################
@@ -56,10 +61,6 @@ variable "launch_config_cp" {
 variable "tg_healthport" {
   type = string
   default =  "4431"
-}
-
-variable "env" {
-  type = string
 }
 
 variable "tg_healthprotocol" {
@@ -93,6 +94,46 @@ variable "tg_protocol" {
 }
 
 variable "lb-listner" {
-  type = list (object({ port = string, protocol  = string}))
+  type = list (object({ port = string, protocol  = string, tg = string }))
 }
+
+/*variable  "lb_target_group" { 
+   type = list (object({ name = string, port = string,  protocol  = string,  healthcheck_port = string, healthcheck_protocol = string, healthcheck_path = string, enabled = string }))
+   default = [{
+   {name = "proxy" port = "3128", protocol = "TCP", healthcheck_port = "4431", healthcheck_protocol = "HTTPS", healthcheck_path = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck", enabled = "true"},
+   {name = "pac" port = "9001", protocol = "TCP", healthcheck_port = "", healthcheck_protocol = "", healthcheck_path = "", enabled= "false"}
+]
+}
+}*/
+
+variable "lb_target_group" {
+   type = list (object({ name = string, port = string,  protocol  = string,  healthcheck_port = string, healthcheck_protocol = string, healthcheck_path = string }))
+   default = [{
+     name = "proxy",
+     port = "3128",
+     protocol = "TCP",
+     healthcheck_port = "4431",
+     healthcheck_protocol = "HTTPS",
+     healthcheck_path = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
+},
+     {
+     name = "pac",
+     port = "9001",
+     protocol = "TCP",
+     healthcheck_port = "traffic-port",
+     healthcheck_protocol = "HTTP",
+     healthcheck_path = ""
+} 
+	]
+}
+
+/*variable "pac_target_group" {
+   type = list (object({ name = string, port = string,  protocol  = string }))
+   default = [{
+     name = "pac",
+     port = "9001",
+     protocol = "TCP"
+}
+        ]
+}*/
 

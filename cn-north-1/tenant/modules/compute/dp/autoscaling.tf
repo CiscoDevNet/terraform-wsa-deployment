@@ -40,19 +40,24 @@ resource "aws_lb" "swa_nlb" {
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
 resource "aws_lb_target_group" "swa_tg" {
-  name        = "${var.swa_tenant}-TG"
-  port        = var.tg_port
-  protocol    = var.tg_protocol
+  name        = "${var.swa_tenant}-${var.lb_target_group[count.index].name}-TG"
+  count = length(var.lb_target_group)
+  port        = var.lb_target_group[count.index].port
+  protocol    = var.lb_target_group[count.index].protocol
   vpc_id      = var.vpc_id
   target_type = "instance"
+  //enabled = var.lb_target_group[count.index].enabled
   health_check {
-     port = var.tg_healthport
-     protocol = var.tg_healthprotocol
-     path = var.tg_healthpath
+     protocol = var.lb_target_group[count.index].healthcheck_protocol
+     path = var.lb_target_group[count.index].healthcheck_path
+     port = var.lb_target_group[count.index].healthcheck_port
   }
 
   lifecycle {
     create_before_destroy = true
+  }
+  tags = {
+       swa_tgtype =  var.lb_target_group[count.index].name
   }
 }
 
@@ -61,20 +66,27 @@ resource "aws_lb_target_group" "swa_tg" {
 #INFO: the following resource block creates the Listeners for the NLB creaed above
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
+/*data "aws_lb_target_group" "pac-tg" {
+  tags = {
+    key = "swa_tgtype"
+    values = "pac"
+  }
+}*/
 
 resource "aws_lb_listener" "k3s_lb_http" {
   count = length(var.lb-listner)
+  //for_each = var.lb-listner 
   load_balancer_arn = aws_lb.swa_nlb.id
-  port = var.lb-listner[count.index].port
+  //port = each.value["port"]
   protocol = var.lb-listner[count.index].protocol
-
+  port = var.lb-listner[count.index].port
   default_action {
-    target_group_arn = aws_lb_target_group.swa_tg.id
-    type             = "forward"
+      type             = "forward"
+      target_group_arn = var.lb-listner[count.index].tg == "pac" ? aws_lb_target_group.swa_tg[1].arn : aws_lb_target_group.swa_tg[0].arn
   }
 }
 
-
+ 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO : the following resource create the AutoScaling Launch Template for the DATA PLANE Instances for the cluster
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
@@ -125,7 +137,7 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   min_size           = var.dp_min_size     //(== 1 ? var.desired : var.desired - 1)
   health_check_type = "ELB"
   health_check_grace_period = 600
-  target_group_arns = [ aws_lb_target_group.swa_tg.arn ]   ############  NEW Addition to the DP autoscale only
+  target_group_arns = aws_lb_target_group.swa_tg[*].arn   ############  NEW Addition to the DP autoscale only
   launch_template {
     id = aws_launch_template.wsa_autoscale.id
     version = aws_launch_template.wsa_autoscale.latest_version

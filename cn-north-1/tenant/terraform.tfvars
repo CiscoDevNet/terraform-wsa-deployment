@@ -17,12 +17,12 @@ launch_config_cp = [
 
 
 lb-listner = [
-    { port = "3128", protocol = "TCP" },
-    { port = "8443", protocol = "TCP" }
+    { port = "3128", protocol = "TCP", tg = "proxy" },
+    { port = "9001", protocol = "TCP", tg = "pac" }
 ]
 
 upgrade_version = ""
-env = "prod"
+env = ""
 swa_domain = "tenant456.cn"
 
 

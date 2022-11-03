@@ -77,9 +77,9 @@ variable "lb_target_group" {
      name = "pac",
      port = "9001",
      protocol = "TCP",
-     healthcheck_port = "traffic-port",
-     healthcheck_protocol = "HTTP",
-     healthcheck_path = ""
+     healthcheck_port = "4431",
+     healthcheck_protocol = "HTTPS",
+     healthcheck_path = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
 } 
 	]
 }

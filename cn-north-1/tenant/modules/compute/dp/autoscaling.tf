@@ -46,7 +46,6 @@ resource "aws_lb_target_group" "swa_tg" {
   protocol    = var.lb_target_group[count.index].protocol
   vpc_id      = var.vpc_id
   target_type = "instance"
-  //enabled = var.lb_target_group[count.index].enabled
   health_check {
      protocol = var.lb_target_group[count.index].healthcheck_protocol
      path = var.lb_target_group[count.index].healthcheck_path
@@ -66,18 +65,9 @@ resource "aws_lb_target_group" "swa_tg" {
 #INFO: the following resource block creates the Listeners for the NLB creaed above
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-/*data "aws_lb_target_group" "pac-tg" {
-  tags = {
-    key = "swa_tgtype"
-    values = "pac"
-  }
-}*/
-
 resource "aws_lb_listener" "k3s_lb_http" {
   count = length(var.lb-listner)
-  //for_each = var.lb-listner 
   load_balancer_arn = aws_lb.swa_nlb.id
-  //port = each.value["port"]
   protocol = var.lb-listner[count.index].protocol
   port = var.lb-listner[count.index].port
   default_action {

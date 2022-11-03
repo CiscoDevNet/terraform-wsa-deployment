@@ -86,17 +86,9 @@ module "autoscaling_dp" {
   swa_tenant = var.swa_tenant
   swa_role = "data"
   nlb-eip = module.network.nlb-eip
-  //proxy_target_group = var.proxy_target_group
   lb_target_group = var.lb_target_group
   vpc_id = var.vpc_id
   lb-listner = var.lb-listner
-  tg_healthport = var.tg_healthport
-  tg_healthprotocol = var.tg_healthprotocol
-  tg_healthpath = var.tg_healthpath
-  listener_port = var.listener_port
-  listener_protocol = var.listener_protocol
-  tg_port = var.tg_port
-  tg_protocol = var.tg_protocol
   dp_max_size = var.launch_config_dp[count.index].desired
   dp_min_size = var.launch_config_dp[count.index].desired
 }

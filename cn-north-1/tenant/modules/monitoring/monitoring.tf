@@ -1,6 +1,6 @@
 data "aws_caller_identity" "current" {}
 
-/*resource "aws_cloudwatch_event_rule" "asgevents" {
+resource "aws_cloudwatch_event_rule" "asgevents" {
   name        = "capture-ec2-scaling-events"
   description = "Capture all EC2 scaling events"
 
@@ -53,7 +53,7 @@ data "aws_iam_policy_document" "example_log_policy" {
 resource "aws_cloudwatch_event_target" "asgevent_target" {
   rule = aws_cloudwatch_event_rule.asgevents.name
   arn  = aws_cloudwatch_log_group.asglog_group.arn
-}*/
+}
 
 resource "aws_sns_topic" "user_updates" {
   name = "${var.swa_tenant}_web_alert"

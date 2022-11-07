@@ -25,4 +25,3 @@ upgrade_version = ""
 env = ""
 swa_domain = "tenant456.cn"
 
-

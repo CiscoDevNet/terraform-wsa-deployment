@@ -44,35 +44,30 @@ variable "desired" {
   type = number
 }
 
-
-variable "listener_port" {
-  type = number
-}
-
-variable "listener_protocol" {
-  type = string
-}
-
-variable "tg_port" {
-  type = number
-}
-
-variable "tg_protocol" {
-  type = string
-}
-
-variable "tg_healthport" {
-  type = string
-}
-
-variable "tg_healthprotocol" {
-  type = string
-}
-
-variable "tg_healthpath" {
-  type = string
-}
-
 variable "lb-listner" {
-  type = list (object({ port = string, protocol  = string}))
+  type = list (object({ port = string, protocol  = string, tg = string }))
+}
+
+variable "lb_target_group" {
+  type = list (object({ name = string, port = string,  protocol  = string,  healthcheck_port = string, healthcheck_protocol = string, healthcheck_path = string }))
+}
+
+variable "volume_termination"{
+ type = string
+ default = "true"
+}
+
+variable "dp_max_size" {
+  type = string
+  //default = 2
+}
+
+variable "dp_min_size" {
+  type = string
+  //default = 2
+}
+
+variable "dp_tg_port" {
+  type = string
+  default = "9001"
 }

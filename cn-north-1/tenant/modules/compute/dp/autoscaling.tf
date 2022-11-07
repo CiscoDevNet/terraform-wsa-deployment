@@ -40,19 +40,23 @@ resource "aws_lb" "swa_nlb" {
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
 resource "aws_lb_target_group" "swa_tg" {
-  name        = "${var.swa_tenant}-TG"
-  port        = var.tg_port
-  protocol    = var.tg_protocol
+  name        = "${var.swa_tenant}-${var.lb_target_group[count.index].name}-TG"
+  count = length(var.lb_target_group)
+  port        = var.lb_target_group[count.index].port
+  protocol    = var.lb_target_group[count.index].protocol
   vpc_id      = var.vpc_id
   target_type = "instance"
   health_check {
-     port = var.tg_healthport
-     protocol = var.tg_healthprotocol
-     path = var.tg_healthpath
+     protocol = var.lb_target_group[count.index].healthcheck_protocol
+     path = var.lb_target_group[count.index].healthcheck_path
+     port = var.lb_target_group[count.index].healthcheck_port
   }
 
   lifecycle {
     create_before_destroy = true
+  }
+  tags = {
+       swa_tgtype =  var.lb_target_group[count.index].name
   }
 }
 
@@ -61,20 +65,18 @@ resource "aws_lb_target_group" "swa_tg" {
 #INFO: the following resource block creates the Listeners for the NLB creaed above
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-
 resource "aws_lb_listener" "k3s_lb_http" {
   count = length(var.lb-listner)
   load_balancer_arn = aws_lb.swa_nlb.id
-  port = var.lb-listner[count.index].port
   protocol = var.lb-listner[count.index].protocol
-
+  port = var.lb-listner[count.index].port
   default_action {
-    target_group_arn = aws_lb_target_group.swa_tg.id
-    type             = "forward"
+      type             = "forward"
+      target_group_arn = var.lb-listner[count.index].tg == "pac" ? aws_lb_target_group.swa_tg[1].arn : aws_lb_target_group.swa_tg[0].arn
   }
 }
 
-
+ 
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 #INFO : the following resource create the AutoScaling Launch Template for the DATA PLANE Instances for the cluster
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
@@ -98,7 +100,7 @@ resource "aws_launch_template" "wsa_autoscale" {
     device_name = "/dev/sda1"
    	ebs {
    		volume_size = 200
-                delete_on_termination = true
+                delete_on_termination = var.volume_termination
                 encrypted = false
  	}
      }	
@@ -106,7 +108,7 @@ resource "aws_launch_template" "wsa_autoscale" {
     resource_type = "volume"
 
     tags = {
-      Name = "${var.lt_name}-volume"
+      Name = "${var.lt_name}_volume"
     }
   }
 }
@@ -121,11 +123,11 @@ data "aws_default_tags" "provider" {}
 resource "aws_autoscaling_group" "autoscaled_group" {
   name = "${var.swa_tenant}-dp-ASG"
   desired_capacity   = var.desired
-  max_size           = var.desired     //(+ 1)
-  min_size           = var.desired     //(== 1 ? var.desired : var.desired - 1)
+  max_size           = var.dp_max_size     //(+ 1)
+  min_size           = var.dp_min_size     //(== 1 ? var.desired : var.desired - 1)
   health_check_type = "ELB"
   health_check_grace_period = 600
-  target_group_arns = [ aws_lb_target_group.swa_tg.arn ]   ############  NEW Addition to the DP autoscale only
+  target_group_arns = aws_lb_target_group.swa_tg[*].arn   ############  NEW Addition to the DP autoscale only
   launch_template {
     id = aws_launch_template.wsa_autoscale.id
     version = aws_launch_template.wsa_autoscale.latest_version
@@ -142,15 +144,6 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   lifecycle {
     create_before_destroy = true
   }
-
-  /*
-  instance_refresh {
-    strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 30
-    }
-    triggers = ["tag"]
-  }*/
   
   dynamic "tag" {
     for_each = data.aws_default_tags.provider.tags
@@ -162,17 +155,17 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   }
   
   tag {
-        key = "Name"
+        key = "name"
         value = var.lt_name
         propagate_at_launch = true
   }
   tag {
-        key = "SWARole"
+        key = "swa_role"
         value = var.swa_role
         propagate_at_launch = true
   }
   tag {
-        key = "autoScaledExp"
+        key = "autocaled_exp"
         value = true
         propagate_at_launch = true
   }

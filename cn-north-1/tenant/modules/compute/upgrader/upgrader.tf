@@ -1,24 +1,23 @@
 data "aws_default_tags" "provider" {}
 
-data "aws_security_group" "selected" {
+/*data "aws_security_group" "selected" {
    tags = {
-      SWATenant = var.swa_tenant
-      //Name = var.sg_autoscaling
+      swa_tenant = var.swa_tenant
  }
-}
+}*/
 
 
 resource "aws_instance" "upgrader"{
-  //security_groups = var.sg_autoscaling
-  vpc_security_group_ids = [data.aws_security_group.selected.id]
+  //vpc_security_group_ids = [data.aws_security_group.selected.id]
+  vpc_security_group_ids = var.sg_autoscaling
   iam_instance_profile = var.iam_profile
   ami = var.image_id
   subnet_id   = tolist(var.subnets)[0]
   instance_type = var.instance_type 
   tags = {
-    SWARole = "upgrader"
-    SWAUpgradeVersion = var.upgrade_version
-    Name = "${var.swa_tenant}-upgrader"
+    swa_role = "upgrader"
+    swa_upgrade_version = var.upgrade_version
+    Name = "${var.swa_tenant}_upgrader"
  }
   metadata_options {
     http_endpoint = "enabled"
@@ -27,12 +26,7 @@ resource "aws_instance" "upgrader"{
   volume_tags = merge(
     data.aws_default_tags.provider.tags,
     {
-      Name = "${var.swa_tenant}-upgrader-volume"
+      Name = "${var.swa_tenant}_upgrader_volume"
     }
   )
 }
-
-/*resource "aws_network_interface_sg_attachment" "sg_attachment" {
-  security_group_id    = data.aws_security_group.selected.id
-  network_interface_id = aws_instance.upgrader.primary_network_interface_id
-}*/

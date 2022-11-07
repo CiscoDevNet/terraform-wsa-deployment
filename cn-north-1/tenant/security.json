@@ -1,0 +1,114 @@
+{
+        "SecurityGroups": [
+                {
+                        "name": "dpsg",
+                        "Ingress": [
+                                {
+                                        "to_port": "8500",
+                                        "from_port": "8500",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "vpc_cidr"
+                                        ]
+                                },
+                                {
+                                        "to_port": "22",
+                                        "from_port": "22",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "0.0.0.0/0"
+                                        ]
+                                },
+                                {
+                                        "to_port": "8302",
+                                        "from_port": "8300",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "vpc_cidr"
+                                        ]
+                                },
+                                {
+                                        "to_port": "3128",
+                                        "from_port": "3128",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": ["0.0.0.0/0"]
+                                },
+                                {
+                                        "to_port": "9001",
+                                        "from_port": "9001",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": ["0.0.0.0/0"]
+                                },
+                                {
+                                        "to_port": "0",
+                                        "from_port": "0",
+                                        "protocol": "-1",
+                                        "cidr_blocks": [
+                                                "173.39.121.72/32"
+                                        ]
+                                }
+
+
+
+
+                        ]
+                },
+                {
+                        "name": "cpsg",
+                        "Ingress": [
+                                {
+                                        "to_port": "8302",
+                                        "from_port": "8300",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "vpc_cidr"
+                                        ]
+                                },
+                                {
+                                        "to_port": "7000",
+                                        "from_port": "7000",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "vpc_cidr"
+                                        ]
+                                },
+                                {
+                                        "to_port": "22",
+                                        "from_port": "22",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "0.0.0.0/0"
+                                        ]
+                                },
+                                {
+                                        "to_port": "4431",
+                                        "from_port": "4431",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": ["0.0.0.0/0"]
+                                },
+                                {
+                                        "to_port": "8443",
+                                        "from_port": "8443",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": ["0.0.0.0/0"]
+                                },
+                                                                {
+                                        "to_port": "8500",
+                                        "from_port": "8500",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "vpc_cidr"
+                                        ]
+                                },
+                                {
+                                        "to_port": "0",
+                                        "from_port": "0",
+                                        "protocol": "-1",
+                                        "cidr_blocks": [
+                                                "173.39.121.72/32"
+                                        ]
+                                }
+                        ]
+                }
+        ]
+}

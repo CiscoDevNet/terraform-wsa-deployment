@@ -21,6 +21,7 @@ variable "subnet_config" {
   type = list(object({cidr_block = string, availability_zone = string}))
 }
 
+
 variable "swa_domain" {
   type = string
 }
@@ -48,49 +49,38 @@ variable "launch_config_cp" {
   type = list (object({ ami_id = string, instance_type = string, desired = number}))
 }
 
-########################
-###Upgrade
-########################
-
-variable "tg_healthport" {
-  type = string
-  default =  "4431"
-}
-
 variable "env" {
   type = string
 }
 
-variable "tg_healthprotocol" {
-  type = string
-  default = "HTTPS"
-}
 
-variable "tg_healthpath" {
-  type = string
-  default = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
-}
-
-variable "listener_port" {
-  type = number
-  default = 3128
-}
-
-variable "listener_protocol" {
-  type = string
-  default = "TCP"
-}
-
-variable "tg_port" {
-  type = number
-  default = 3128
-}
-
-variable "tg_protocol" {
-  type = string
-  default = "TCP"
-}
+########################
+###Upgrade
+########################
 
 variable "lb-listner" {
-  type = list (object({ port = string, protocol  = string}))
+  type = list (object({ port = string, protocol  = string, tg = string }))
 }
+
+
+variable "lb_target_group" {
+   type = list (object({ name = string, port = string,  protocol  = string,  healthcheck_port = string, healthcheck_protocol = string, healthcheck_path = string }))
+   default = [{
+     name = "proxy",
+     port = "3128",
+     protocol = "TCP",
+     healthcheck_port = "4431",
+     healthcheck_protocol = "HTTPS",
+     healthcheck_path = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
+},
+     {
+     name = "pac",
+     port = "9001",
+     protocol = "TCP",
+     healthcheck_port = "4431",
+     healthcheck_protocol = "HTTPS",
+     healthcheck_path = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
+} 
+	]
+}
+

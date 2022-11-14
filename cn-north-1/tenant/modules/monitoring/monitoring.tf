@@ -16,7 +16,13 @@ resource "aws_cloudwatch_event_rule" "asgevents" {
     "EC2 Instance Terminate Unsuccessful",
     "EC2 Instance-launch Lifecycle Action",
     "EC2 Instance-terminate Lifecycle Action"
-  ]
+  ],
+  "detail": {
+    "AutoScalingGroupName": [
+      "${var.swa_tenant}-dp-ASG",
+      "${var.swa_tenant}-cp-ASG"
+    ]
+}
 }
 PATTERN
 }
@@ -31,6 +37,7 @@ data "aws_iam_policy_document" "example_log_policy" {
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
+      "logs:PutLogEventsBatch",
     ]
 
     resources = [

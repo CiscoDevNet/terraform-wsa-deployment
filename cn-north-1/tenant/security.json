@@ -99,15 +99,7 @@
                                         "cidr_blocks": [
                                                 "vpc_cidr"
                                         ]
-                                },
-                                {
-                                        "to_port": "0",
-                                        "from_port": "0",
-                                        "protocol": "-1",
-                                        "cidr_blocks": [
-                                                "173.39.121.72/32"
-                                        ]
-                                }
+								}
                         ]
                 }
         ]

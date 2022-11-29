@@ -132,36 +132,3 @@ module "monitoring" {
   swa_tenant = var.swa_tenant
 }
 
-/*module "upgrade_autoscaling" {
-  depends_on = [ module.autoscaling_dp ]
-  source = "./modules/upgrade"
-  swa_role = "data"
-  //swa_tg = module.upgrade.swa_tg
-  count = length(var.launch_config_dp)
-  subnets = module.network.subnet_tenant_public
-  //swa_nlb = module.autoscaling_dp.swa_nlb
-  iam_profile = module.iam.ec2_profile
-  sg_autoscaling = module.security_group.mgmt_sec_group
-  dp_lt_name = "${var.swa_tenant}-dp"
-  dp_image_id = var.launch_config_dp[count.index].ami_id
-  dp_instance_type = var.launch_config_dp[count.index].instance_type
-  dp_desired = var.launch_config_dp[count.index].desired
-  swa_tenant = var.swa_tenant
-  dp_swa_role = "data"
-  lb_target_group = var.lb_target_group
-  vpc_id = var.vpc_id
-  dp_max_size = var.launch_config_dp[count.index].desired
-  dp_min_size = var.launch_config_dp[count.index].desired
-  upgrade_version = var.upgrade_version
-  
-  cp_lt_name = "${var.swa_tenant}-cp"
-  cp_image_id = var.launch_config_cp[count.index].ami_id
-  cp_desired = var.launch_config_cp[count.index].desired
-  cp_instance_type = var.launch_config_cp[count.index].instance_type
-  cp_swa_role = "control"
-  cp_max_size = var.launch_config_cp[count.index].desired
-  cp_min_size = var.launch_config_cp[count.index].desired
-}
-
-data "aws_region" "current" {
-}

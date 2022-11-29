@@ -73,7 +73,8 @@ module "security_group" {
 
 
 module "autoscaling_dp" {
-  depends_on = [ module.network ]
+  //depends_on = [ module.network ]
+  depends_on = [ module.security_group ]
   source = "./modules/compute/dp"
   count = length(var.launch_config_dp)
   subnets = module.network.subnet_tenant_public
@@ -96,6 +97,7 @@ module "autoscaling_dp" {
 
 module "autoscaling_cp" {
   source = "./modules/compute/cp"
+  depends_on = [ module.security_group ]
   count = length(var.launch_config_cp)
   subnets = module.network.subnet_tenant_public
   iam_profile = module.iam.ec2_profile
@@ -129,3 +131,4 @@ module "monitoring" {
   source = "./modules/monitoring"
   swa_tenant = var.swa_tenant
 }
+

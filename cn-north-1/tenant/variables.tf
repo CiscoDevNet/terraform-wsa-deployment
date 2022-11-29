@@ -84,3 +84,8 @@ variable "lb_target_group" {
 	]
 }
 
+/*variable "swa_nlb" {
+  type = string
+}*/
+
+

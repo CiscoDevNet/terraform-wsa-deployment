@@ -2,12 +2,24 @@
 #INFO: the following resource cretes an autoscaling launch template for the CONTROL PLANE - CP Instances of the cluster
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
+data "aws_region" "current" {
+}
+
+data "aws_security_groups" "cpsg" {
+  filter {
+    name   = "group-name"
+    values = ["${var.swa_tenant}-${data.aws_region.current.name}-cpsg"]
+  }
+}
+
+
 resource "aws_launch_template" "wsa_autoscale" {
   name = "${var.lt_name}-lt"
   image_id = var.image_id
   instance_type = var.instance_type
   update_default_version = "true"
-  vpc_security_group_ids = var.sg_autoscaling
+  //vpc_security_group_ids = var.sg_autoscaling
+  vpc_security_group_ids = data.aws_security_groups.cpsg.ids
   metadata_options {
     http_endpoint = "enabled"
     instance_metadata_tags = "enabled"
@@ -72,7 +84,7 @@ resource "aws_autoscaling_group" "autoscaled_group" {
   }
   
   tag {
-        key = "Name"
+        key = "name"
         value = var.lt_name
         propagate_at_launch = true
   }

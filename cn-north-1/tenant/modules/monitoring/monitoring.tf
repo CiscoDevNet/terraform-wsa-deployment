@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_cloudwatch_event_rule" "asgevents" {
-  name        = "capture-ec2-scaling-events"
+  name        = "${var.swa_tenant}-ec2-scaling-events"
   description = "Capture all EC2 scaling events"
 
   event_pattern = <<PATTERN
@@ -16,21 +16,28 @@ resource "aws_cloudwatch_event_rule" "asgevents" {
     "EC2 Instance Terminate Unsuccessful",
     "EC2 Instance-launch Lifecycle Action",
     "EC2 Instance-terminate Lifecycle Action"
-  ]
+],
+"detail": {
+    "AutoScalingGroupName": [
+        "${var.swa_tenant}-dp-ASG",
+        "${var.swa_tenant}-cp-ASG"
+   ]
+  }
 }
 PATTERN
 }
 
 resource "aws_cloudwatch_log_group" "asglog_group" {
-  name              = "/aws/events/asglifecycleevents"
+  name              = "/aws/events/${var.swa_tenant}-asglifecycleevents"
   retention_in_days = 90
 }
 
-data "aws_iam_policy_document" "example_log_policy" {
+data "aws_iam_policy_document" "asglog_policy_document" {
   statement {
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
+      "logs:PutLogEventsBatch",
     ]
 
     resources = [
@@ -50,6 +57,11 @@ data "aws_iam_policy_document" "example_log_policy" {
   }
 }
 
+resource "aws_cloudwatch_log_resource_policy" "asgcloudwatch_policy" {
+  policy_document = data.aws_iam_policy_document.asglog_policy_document.json
+  policy_name     = "${var.swa_tenant}-cloudwatch-asgpolicy" 
+}
+
 resource "aws_cloudwatch_event_target" "asgevent_target" {
   rule = aws_cloudwatch_event_rule.asgevents.name
   arn  = aws_cloudwatch_log_group.asglog_group.arn
@@ -61,13 +73,13 @@ resource "aws_sns_topic" "user_updates" {
 }
 
 
-resource "aws_sns_topic_policy" "default" {
+resource "aws_sns_topic_policy" "swa_sns_topic_policy" {
   arn = aws_sns_topic.user_updates.arn
 
-  policy = data.aws_iam_policy_document.sns_topic_policy.json
+  policy = data.aws_iam_policy_document.swa_sns_topic_policy_document.json
 }
 
-data "aws_iam_policy_document" "sns_topic_policy" {
+data "aws_iam_policy_document" "swa_sns_topic_policy_document" {
   policy_id = "__default_policy_ID"
 
   statement {

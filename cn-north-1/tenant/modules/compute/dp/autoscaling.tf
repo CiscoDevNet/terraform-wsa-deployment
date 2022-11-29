@@ -81,6 +81,17 @@ resource "aws_lb_listener" "k3s_lb_http" {
 #INFO : the following resource create the AutoScaling Launch Template for the DATA PLANE Instances for the cluster
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
+data "aws_region" "current" {
+}
+
+
+data "aws_security_groups" "dpsg" {
+  filter {
+    name   = "group-name"
+    values = ["${var.swa_tenant}-${data.aws_region.current.name}-dpsg"]
+  }
+}
+
 
 resource "aws_launch_template" "wsa_autoscale" {
   name = "${var.lt_name}-lt"                   // "swa-cp-autoscale-test"
@@ -88,7 +99,8 @@ resource "aws_launch_template" "wsa_autoscale" {
   instance_type = var.instance_type     //"c5.2xlarge"
   ##key_name = var.key_name               //"wsa-test-key"
   update_default_version = "true"
-  vpc_security_group_ids = var.sg_autoscaling
+  //vpc_security_group_ids = var.sg_autoscaling
+  vpc_security_group_ids = data.aws_security_groups.dpsg.ids
   metadata_options {
     http_endpoint = "enabled"
     instance_metadata_tags = "enabled"

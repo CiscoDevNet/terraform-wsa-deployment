@@ -16,7 +16,7 @@
                                         "from_port": "22",
                                         "protocol": "tcp",
                                         "cidr_blocks": [
-                                                "0.0.0.0/0"
+                                                "103.59.74.171/32"
                                         ]
                                 },
                                 {
@@ -40,11 +40,11 @@
                                         "cidr_blocks": ["0.0.0.0/0"]
                                 },
                                 {
-                                        "to_port": "0",
-                                        "from_port": "0",
-                                        "protocol": "-1",
+                                        "to_port": "8501",
+                                        "from_port": "8501",
+                                        "protocol": "tcp",
                                         "cidr_blocks": [
-                                                "173.39.121.72/32"
+                                                "vpc_cidr"
                                         ]
                                 }
 
@@ -77,7 +77,7 @@
                                         "from_port": "22",
                                         "protocol": "tcp",
                                         "cidr_blocks": [
-                                                "0.0.0.0/0"
+                                                "103.59.74.171/32"
                                         ]
                                 },
                                 {
@@ -92,20 +92,20 @@
                                         "protocol": "tcp",
                                         "cidr_blocks": ["0.0.0.0/0"]
                                 },
-                                                                {
+                                {
                                         "to_port": "8500",
                                         "from_port": "8500",
                                         "protocol": "tcp",
                                         "cidr_blocks": [
                                                 "vpc_cidr"
                                         ]
-                                },
-                                {
-                                        "to_port": "0",
-                                        "from_port": "0",
-                                        "protocol": "-1",
+				},
+				{
+                                        "to_port": "8501",
+                                        "from_port": "8501",
+                                        "protocol": "tcp",
                                         "cidr_blocks": [
-                                                "173.39.121.72/32"
+                                                "vpc_cidr"
                                         ]
                                 }
                         ]

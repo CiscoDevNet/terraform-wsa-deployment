@@ -38,4 +38,3 @@ resource "aws_security_group" "mgmt_sec_group" {
   }
 }
 
-

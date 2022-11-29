@@ -9,10 +9,10 @@ swa_tenant = "tenant456"
 
 
 launch_config_dp = [
-	{ami_id = "ami-03489ae60f2856692" ,instance_type = "c5.xlarge", desired = 2}
+	{ami_id = "ami-0a059ed0cc05f5e50" ,instance_type = "c5.xlarge", desired = 2}
 ]
 launch_config_cp = [
-        {ami_id = "ami-03489ae60f2856692" ,instance_type = "c5.xlarge" , desired = 3}
+        {ami_id = "ami-0a059ed0cc05f5e50" ,instance_type = "c5.xlarge" , desired = 3}
 ]
 
 
@@ -21,7 +21,7 @@ lb-listner = [
     { port = "9001", protocol = "TCP", tg = "pac" }
 ]
 
-upgrade_version = ""
+upgrade_version = "123.0"
 env = "prod"
 swa_domain = "tenant456.cn"
 

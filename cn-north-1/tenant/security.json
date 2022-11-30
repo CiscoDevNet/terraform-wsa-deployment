@@ -39,6 +39,21 @@
                                         "protocol": "tcp",
                                         "cidr_blocks": ["0.0.0.0/0"]
                                 },
+				{
+                                        "to_port": "22",
+                                        "from_port": "22",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "vpc_cidr"
+                                        ]
+                                },
+				{
+                                        "to_port": "4431",
+                                        "from_port": "4431",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": ["0.0.0.0/0"]
+                                },
+
                                 {
                                         "to_port": "8501",
                                         "from_port": "8501",
@@ -78,6 +93,14 @@
                                         "protocol": "tcp",
                                         "cidr_blocks": [
                                                 "103.59.74.171/32"
+                                        ]
+                                },
+				{
+                                        "to_port": "22",
+                                        "from_port": "22",
+                                        "protocol": "tcp",
+                                        "cidr_blocks": [
+                                                "vpc_cidr"
                                         ]
                                 },
                                 {

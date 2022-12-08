@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "cn-north-1"
+  region = "ap-south-1"
   default_tags {
    tags = {
     product = "swa"
@@ -72,29 +72,6 @@ module "security_group" {
 }
 
 
-module "autoscaling_dp" {
-  //depends_on = [ module.network ]
-  depends_on = [ module.security_group ]
-  source = "./modules/compute/dp"
-  count = length(var.launch_config_dp)
-  subnets = module.network.subnet_tenant_public
-  iam_profile = module.iam.ec2_profile
-  sg_autoscaling = module.security_group.mgmt_sec_group
-  lt_name = "${var.swa_tenant}-dp"
-  image_id = var.launch_config_dp[count.index].ami_id
-  instance_type = var.launch_config_dp[count.index].instance_type
-  desired = var.launch_config_dp[count.index].desired
-  swa_tenant = var.swa_tenant
-  swa_role = "data"
-  nlb-eip = module.network.nlb-eip
-  lb_target_group = var.lb_target_group
-  vpc_id = var.vpc_id
-  lb-listner = var.lb-listner
-  dp_max_size = var.launch_config_dp[count.index].desired
-  dp_min_size = var.launch_config_dp[count.index].desired
-}
-
-
 module "autoscaling_cp" {
   source = "./modules/compute/cp"
   depends_on = [ module.security_group ]
@@ -113,22 +90,8 @@ module "autoscaling_cp" {
   cp_min_size = var.launch_config_cp[count.index].desired
 }
 
-module "upgrader" {
-  count = var.upgrade_version != "" ? 1 : 0
-  source = "./modules/compute/upgrader"
-  subnets = module.network.subnet_tenant_public
-  iam_profile = module.iam.ec2_profile
-  swa_tenant = var.swa_tenant
-  swa_role = "upgrader" 
-  sg_autoscaling = module.security_group.mgmt_sec_group
-  instance_type = var.launch_config_cp[count.index].instance_type
-  image_id = var.launch_config_cp[count.index].ami_id
-  upgrade_version = var.upgrade_version
-}
-
-
-module "monitoring" {
+/*module "monitoring" {
   source = "./modules/monitoring"
   swa_tenant = var.swa_tenant
-}
+}*/
 

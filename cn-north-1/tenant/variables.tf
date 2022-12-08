@@ -42,9 +42,6 @@ variable "sg_name" {
 ######  AUTOSCALING VARIABLES
 #############################
 
-variable "launch_config_dp" {
-  type = list (object( { ami_id = string, instance_type = string, desired = number }))
-}
 variable "launch_config_cp" {
   type = list (object({ ami_id = string, instance_type = string, desired = number}))
 }
@@ -52,40 +49,5 @@ variable "launch_config_cp" {
 variable "env" {
   type = string
 }
-
-
-########################
-###Upgrade
-########################
-
-variable "lb-listner" {
-  type = list (object({ port = string, protocol  = string, tg = string }))
-}
-
-
-variable "lb_target_group" {
-   type = list (object({ name = string, port = string,  protocol  = string,  healthcheck_port = string, healthcheck_protocol = string, healthcheck_path = string }))
-   default = [{
-     name = "proxy",
-     port = "3128",
-     protocol = "TCP",
-     healthcheck_port = "4431",
-     healthcheck_protocol = "HTTPS",
-     healthcheck_path = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
-},
-     {
-     name = "pac",
-     port = "9001",
-     protocol = "TCP",
-     healthcheck_port = "4431",
-     healthcheck_protocol = "HTTPS",
-     healthcheck_path = "/wsa/api/v3.0/healthcheck_services/aws_healthcheck"
-} 
-	]
-}
-
-/*variable "swa_nlb" {
-  type = string
-}*/
 
 

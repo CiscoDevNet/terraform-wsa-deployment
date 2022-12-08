@@ -19,7 +19,6 @@ resource "aws_cloudwatch_event_rule" "asgevents" {
 ],
 "detail": {
     "AutoScalingGroupName": [
-        "${var.swa_tenant}-dp-ASG",
         "${var.swa_tenant}-cp-ASG"
    ]
   }

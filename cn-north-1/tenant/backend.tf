@@ -1,9 +1,9 @@
 
 terraform {
   backend "s3" {
-    region         = "cn-north-1"
-    bucket         = "wsa-terraform-bucket"
-    key            = "tenant159/terraform.tfstate"
+    region         = "ap-south-1"
+    bucket         = "mumbai-terraform-bucket"
+    key            = "enhancement/terraform.tfstate"
   }
 }
 

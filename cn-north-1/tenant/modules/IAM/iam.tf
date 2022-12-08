@@ -13,6 +13,7 @@ output "account_id" {
 data "aws_region" "current_region" {
 }
 
+/*
 resource "aws_iam_policy" "eip_policy" {
   name = "${var.swa_tenant}-eip-policy"
   path = "/"
@@ -35,7 +36,7 @@ resource "aws_iam_policy" "eip_policy" {
     ]
   })
 
-}
+}*/
 
 resource "aws_iam_policy" "ec2_policy" {
   name = "${var.swa_tenant}-ec2-policy"
@@ -155,11 +156,12 @@ resource "aws_iam_policy_attachment" "dynamodb_policy_attach" {
   policy_arn = aws_iam_policy.dynamodb_policy.arn
 }
 
+/*
 resource "aws_iam_policy_attachment" "eip_policy_attach" {
   name = "Attaching eip policy to Role"
   roles = [aws_iam_role.ec2_role.name]
   policy_arn = aws_iam_policy.eip_policy.arn
-}
+}*/
 
 resource "aws_iam_policy_attachment" "ec2_policy_attach" {
   name = "Attaching ec2 policy to Role"

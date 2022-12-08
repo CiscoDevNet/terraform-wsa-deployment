@@ -60,9 +60,10 @@ resource "aws_route_table_association" "rt_associate_public" {
     route_table_id = aws_route_table.swa_route.id
 }
 
+/*
 resource "aws_eip" "eip" {
   tags = { "Name" = "${var.swa_tenant}-cp-eip" }
-}
+}*/
 
 
 ####################
@@ -82,16 +83,4 @@ data "aws_subnets" "subnet_tenant_public" {
    }
 }
 
-
-resource "aws_eip" "nlb-eip" {
-  depends_on = [
-  aws_subnet.subnet
-  ]
-  count = var.env == "prod" ? length(var.subnet_config) : 0
-  vpc = true
-
-  tags = {
-    Name = "${var.swa_tenant}-nlb-${count.index + 1}-eip"
- }
-}
 
